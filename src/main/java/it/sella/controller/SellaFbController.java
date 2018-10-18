@@ -57,7 +57,7 @@ public class SellaFbController {
 		String senderId= reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 		logger.info("senderId>>>>{}",senderId);
 		UserDetail userDetail=getUserDetail(senderId);
-		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage:"",userDetail));
+		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
 	}
 	
