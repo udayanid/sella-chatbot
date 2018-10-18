@@ -1,8 +1,6 @@
 
 package it.sella.controller;
 
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -27,7 +25,7 @@ import it.sella.model.UserDetail;
 public class SellaFbController {
 
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
-	private static final String ACCESS_TOKEN = "EAADwyglYT3gBAHwi1WkPZAnr110y7oqAPnOQrDSCrZB948HjPaBrZA8EiEc7FJRiH0nRtJcedThCsTjjdRIAYWJZC9vVrZBIyQTJ6xCnJ03sqHjo1lMUSGWcZA82ZAV36lOHogZBmKOthYFcgeBbOFHm5z8SwSbdEZBoZA1MOOp9dk9Gp3HSPUeZAbm";
+	private static final String ACCESS_TOKEN = "EAADwyglYT3gBAADvD7dQiT1ANwuht7BafeUUmp0ATRfL5XwJTgEaqG5URT7zGeZCbb8Hmwkp7Iy9vjrvd7sJISIWNDPsqMRUZB29jdU4Rp1qaseqsLaG1xxdnjOXmzjy3ZAS1JgmZAcjDbanwOvWZBI5tU6oZBmBDhvCOlVydZBjgZDZD";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
 	private static final Logger logger = LoggerFactory.getLogger(SellaFbController.class);
 
@@ -48,18 +46,18 @@ public class SellaFbController {
 		RequestPayload reqPayload=getResponseObject(payLoad);
 		logger.info("reqpayload>>>>{}",reqPayload);
 		String eventType=getEventType(reqPayload);
-		Optional<String> textMessage;
+		String textMessage="";
 		if(eventType.equals("PostbackEvent")) {
-			textMessage=Optional.ofNullable(reqPayload.getEntry().get(0).getMessaging().get(0).getPostback().getPayload());
+			textMessage=reqPayload.getEntry().get(0).getMessaging().get(0).getPostback().getPayload();
 			logger.info("getPayload>>>>{}",textMessage);
 		}else{
-			 textMessage = Optional.ofNullable(reqPayload.getEntry().get(0).getMessaging().get(0).getMessage().getText());
+			 textMessage = reqPayload.getEntry().get(0).getMessaging().get(0).getMessage().getText();
 			 logger.info("getRequestedText>>>>{}",textMessage);
 		}
 		String senderId= reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
-		logger.info("senderId>>>>{}",senderId+","+textMessage.orElse(""));
+		logger.info("senderId>>>>{}",senderId);
 		UserDetail userDetail=getUserDetail(senderId);
-		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage.orElse(""),userDetail));
+		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage:"",userDetail));
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
 	}
 	
