@@ -1,6 +1,7 @@
 package it.sella.controller;
 
 import java.text.DateFormat;
+import java.util.Optional;
 
 import org.springframework.web.client.RestTemplate;
 
@@ -11,7 +12,7 @@ import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
 
 public class TestingJson {
-	public static void main1(String[] args) {
+	public static void main(String[] args) {
 		String jsonString="{ \"object\":\"page\", \"entry\":[ { \"id\":\"437062153490261\", \"time\":1539616619429, \"messaging\":[ { \"sender\":{ \"id\":\"1841499292614128\" }, \"recipient\":{ \"id\":\"437062153490261\" }, \"timestamp\":1539616618858, \"message\":{ \"mid\":\"F0LZKLRf0MQRHGQ6dYWTT4e0xl-rcOSVgGN5z_iUHtiBdMDf3S8XzLzrnz-rruC5Op_r4Bg2sBUpZb0_yGPGIw\", \"seq\":127, \"text\":\"hi\" } } ] } ] }";
 		Gson gson =new GsonBuilder().setDateFormat(DateFormat.LONG).create();
 		RequestPayload payload=gson.fromJson(jsonString, RequestPayload.class);
@@ -27,5 +28,16 @@ public class TestingJson {
 		
 		String jsonResponse="{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }";
 		System.out.println(String.format(jsonResponse,"hello moto"));
+	      Integer value1 = null;
+	      Integer value2 = new Integer(10);
+			
+	      //Optional.ofNullable - allows passed parameter to be null.
+	      Optional<Integer> a = Optional.ofNullable(value1);
+	      Integer s=a.orElse(30);
+	      System.out.println("a"+s);
+			
+	      //Optional.of - throws NullPointerException if passed parameter is null
+	      Optional<Integer> b = Optional.of(value2);
+	      System.out.println(b);
 	}
 }
