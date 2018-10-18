@@ -9,8 +9,7 @@ public class QnaResponse {
 	private static final Logger logger = LoggerFactory.getLogger(QnaResponse.class);
 
 	public static String getJsonResponse(String senderId, String requestText, UserDetail userDetail) {
-		String jsonResponse = "";
-		
+		String jsonResponse = "";		
 		switch (getActualKeyword(requestText)) {
 		case "hi":
 		case "hai":
@@ -76,7 +75,7 @@ public class QnaResponse {
 		case "carte":
 		case "carti":
             jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Our Carte!!!\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"CARTE DI DEBITO\", \"payload\":\"all carte details\" }, { \"type\":\"postback\", \"title\":\"CARTE DI CREDITO\", \"payload\":\"all carte details\" }, { \"type\":\"postback\", \"title\":\"HYPE PLUS\", \"payload\":\"all carte details\" }  ] } } } }";
-			break;
+		break;
 		case "list investimenti e risparmio":
 		case "investimenti":
 		case "list investimenti":
@@ -115,7 +114,7 @@ public class QnaResponse {
 		}else if(textSearch.contains("hype")) {
 			searchString="hype";
 		}else if(textSearch.contains("invest")) {
-			searchString="invest";
+			searchString="investimenti";
 		}else if(textSearch.contains("websella") || textSearch.contains("websela")) {
 			searchString="websella";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao")) {
