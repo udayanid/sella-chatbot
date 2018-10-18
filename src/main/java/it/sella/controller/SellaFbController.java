@@ -25,7 +25,7 @@ import it.sella.model.UserDetail;
 public class SellaFbController {
 
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
-	private static final String ACCESS_TOKEN = "EAADwyglYT3gBAADvD7dQiT1ANwuht7BafeUUmp0ATRfL5XwJTgEaqG5URT7zGeZCbb8Hmwkp7Iy9vjrvd7sJISIWNDPsqMRUZB29jdU4Rp1qaseqsLaG1xxdnjOXmzjy3ZAS1JgmZAcjDbanwOvWZBI5tU6oZBmBDhvCOlVydZBjgZDZD";
+	private static final String ACCESS_TOKEN = "EAADwyglYT3gBAH9tw9NLNWqoMuHXl6iERXoVLDXaOKTgjXVIPPtJe88KJ88KsC5ea7xoXvMdgeCK7vk4q2VGRL8GRcqKPtcCuXHizOZChZBxImCKKYx3dzx83tFPdDpDp239JWJLdEHmAuKibAeqFUmLqZCoIhbOZBpyOSgEybnr6IRWk8Si";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
 	private static final Logger logger = LoggerFactory.getLogger(SellaFbController.class);
 
