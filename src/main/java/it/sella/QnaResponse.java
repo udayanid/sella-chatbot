@@ -108,7 +108,7 @@ public class QnaResponse {
 			searchString="hype plus";
 		}else if(textSearch.contains("visa")) {
 			searchString="visa classic";
-		}else if(textSearch.contains("mastercard")) {
+		}else if(textSearch.contains("master")) {
 			searchString="mastercard classic";
 		}else if(textSearch.contains("invest") && !(textSearch.equals("all investimenti details"))) {
 			searchString="investimenti";
