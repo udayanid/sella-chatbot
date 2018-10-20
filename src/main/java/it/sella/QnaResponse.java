@@ -87,7 +87,7 @@ public class QnaResponse {
 		
 		default:
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Non sono riuscita a comprendere la richiesta, se lo desideri ti posso mettere in contatto con un nostro operatore della assitenza.\", \"buttons\":[ { \"type\":\"phone_number\", \"title\":\"Clicca qui per proseguire\", \"payload\":\"+02224410023\" } ] } } } }";
-			break;
+			break; 
 		}
 		jsonResponse = jsonResponse.replace("recipientId", senderId);
 		logger.info("jsonresponse>>>>{}", jsonResponse);
