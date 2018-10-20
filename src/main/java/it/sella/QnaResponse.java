@@ -67,6 +67,10 @@ public class QnaResponse {
 		case "all investimenti details":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
 			break;
+		case "all finanziamenti":
+			jsonResponse="";
+		break;
+		
 		case "all investimenti details1":
 			jsonResponse ="";
 			break;
