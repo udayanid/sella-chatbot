@@ -67,6 +67,9 @@ public class QnaResponse {
 		case "all investimenti details":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
 			break;
+		case "all investimenti details1":
+			jsonResponse ="";
+			break;
 		case "call our representative":
 			jsonResponse = String.format(
 					"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
@@ -78,6 +81,10 @@ public class QnaResponse {
 					"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
 					"Grazie " + userDetail.getFirstName() + " " + userDetail.getLastName()+", Speriamo di aver risposto alle tue domamde.  Buona giornata ");
 		break;
+		case "test":			
+			jsonResponse ="{ \"recipient\":{ \"id\":\"1841499292614128\" }, \"message\": { \"attachment\": { \"type\": \"template\", \"payload\": { \"template_type\": \"list\", \"top_element_style\": \"compact\", \"elements\": [ { \"title\": \"Classic T-Shirt Collection\", \"subtitle\": \"See all our colors\", \"image_url\": \"https://chatbot-hook.herokuapp.com//img/hype_bse.gif\", \"buttons\": [ { \"title\": \"View\", \"type\": \"web_url\", \"url\": \"https://www.sella.it/banca-online/privati/conti-e-carte/carte/cirrus-maestro-basic.jsp\", \"messenger_extensions\": true, \"webview_height_ratio\": \"tall\", \"fallback_url\": \"https://www.sella.it/banca-online/privati/index.jsp\" } ] }, { \"title\": \"Classic Wgute T-Shirt\", \"subtitle\": \"See all other colors\", \"default_action\": { \"type\": \"web_url\", \"url\": \"https://www.sella.it/banca-online/privati/index.jsp\", \"messenger_extensions\": false, \"webview_height_ratio\": \"tall\" } }, { \"title\": \"Classic Blue T-Shirt\", \"image_url\": \"https://chatbot-hook.herokuapp.com//img/hype_bse.gif\", \"subtitle\": \"100% Cotton, 200% Comfortable\", \"default_action\": { \"type\": \"web_url\", \"url\": \"https://www.sella.it/banca-online/privati/index.jsp\", \"messenger_extensions\": true, \"webview_height_ratio\": \"tall\", \"fallback_url\": \"https://www.sella.it/banca-online/privati/index.jsp\" }, \"buttons\": [ { \"title\": \"Shop Now\", \"type\": \"web_url\", \"url\": \"https://chatbot-hook.herokuapp.com//img/hype_bse.gif\", \"messenger_extensions\": true, \"webview_height_ratio\": \"tall\", \"fallback_url\": \"https://www.sella.it/banca-online/privati/index.jsp\" } ] }, { \"title\": \"Classic Blue T-Shirt\", \"image_url\": \"https://chatbot-hook.herokuapp.com//img/hype_bse.gif\", \"subtitle\": \"100% Cotton, 200% Comfortable\", \"default_action\": { \"type\": \"web_url\", \"url\": \"https://www.sella.it/banca-online/privati/index.jsp\", \"messenger_extensions\": true, \"webview_height_ratio\": \"tall\", \"fallback_url\": \"https://www.sella.it/banca-online/privati/index.jsp\" }, \"buttons\": [ { \"title\": \"Shop Now\", \"type\": \"web_url\", \"url\": \"https://chatbot-hook.herokuapp.com//img/hype_bse.gif\", \"messenger_extensions\": true, \"webview_height_ratio\": \"tall\", \"fallback_url\": \"https://www.sella.it/banca-online/privati/index.jsp\" } ] } ], \"buttons\": [ { \"title\": \"View More\", \"type\": \"postback\", \"payload\": \"payload\" } ] } } } }";
+		break;
+		
 		default:
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Non sono riuscita a comprendere la richiesta, se lo desideri ti posso mettere in contatto con un nostro operatore della assitenza.\", \"buttons\":[ { \"type\":\"phone_number\", \"title\":\"Clicca qui per proseguire\", \"payload\":\"+02224410023\" } ] } } } }";
 			break;
