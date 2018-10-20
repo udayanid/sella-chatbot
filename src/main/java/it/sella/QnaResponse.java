@@ -91,6 +91,7 @@ public class QnaResponse {
 		}
 		jsonResponse = jsonResponse.replace("recipientId", senderId);
 		logger.info("jsonresponse>>>>{}", jsonResponse);
+		logger.info("tsttstset");
 		return jsonResponse;
 	}
 	
