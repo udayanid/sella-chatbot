@@ -56,19 +56,25 @@ public class SellaFbController {
 		}
 		String senderId= reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 		logger.info("senderId>>>>{}",senderId);
+		String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
+		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
+		senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
+		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		UserDetail userDetail=getUserDetail(senderId);
 		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
+	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
+	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
 	}
 	
-	public void sendMessage(String payLoad) {
+	public String sendMessage(String payLoad) {
 		String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
 		logger.info("url>>>>{}",url);
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);	
 		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);		
-		restTemplate.postForObject(url, entity, String.class);
+		return restTemplate.postForObject(url, entity, String.class);
 	}
 	
 	public UserDetail getUserDetail(String senderId) {
@@ -77,6 +83,10 @@ public class SellaFbController {
 		RestTemplate restTemplate=new RestTemplate();	
 		UserDetail userDetail = restTemplate.getForObject(url, UserDetail.class);
 		return userDetail;
+	}
+	
+	private String getSenderActionResonse(final String senderAction, final String senderId) {
+		return String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"sender_action\":\"%s\" }", senderId,senderAction);
 	}
 	
 	
