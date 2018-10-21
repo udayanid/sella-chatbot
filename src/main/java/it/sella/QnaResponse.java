@@ -144,6 +144,8 @@ public class QnaResponse {
 			searchString="mastercard classic";
 		}else if(textSearch.contains("invest")) {
 			searchString="list investimenti";
+		}else if(textSearch.contains("finan")) {
+			searchString="list finanziamenti";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao") || textSearch.contains("hi")|| textSearch.contains("hai") || textSearch.contains("hello") || textSearch.contains("helo")) {
 			searchString="hi";
 		}else if(textSearch.contains("thank") || textSearch.contains("bye")|| textSearch.contains("grazie")) {
