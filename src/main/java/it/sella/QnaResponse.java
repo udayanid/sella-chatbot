@@ -95,6 +95,21 @@ public class QnaResponse {
 		case "prestidea ambiente":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
 		break;
+		case "list protezione":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Protezione Persona\", \"image_url\":\"https://sella-bot.herokuapp.com/img/persona.png\", \"subtitle\":\"PROTEZIONE\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"persona\" } ] }, { \"title\":\"Protezione Famiglia\", \"image_url\":\"https://sella-bot.herokuapp.com/img/family.png\", \"subtitle\":\"PROTEZIONE\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"famiglia\" } ] }, { \"title\":\"Protezione Casa\", \"image_url\":\"https://sella-bot.herokuapp.com/img/casa.png\", \"subtitle\":\"PROTEZIONE\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"casa\" } ] }, { \"title\":\"Assicurazione Valore Auto\", \"image_url\":\"https://sella-bot.herokuapp.com/img/auto.png\", \"subtitle\":\"PROTEZIONE\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"assicurazione valore auto\" } ] } ] } } } }";
+		break;
+		case "persona":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Protezione Persona\", \"image_url\":\"https://sella-bot.herokuapp.com/img/persona.png\", \"subtitle\":\"rimborso spese mediche;\\nricovero ospedaliero, convalescenza e gesso\\ninvalidità permanente;\\ndecesso a seguito di infortunio.\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-infortuni.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-infortuni.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
+		case "auto":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Assicurazione Valore Auto\", \"image_url\":\"https://sella-bot.herokuapp.com/img/auto.png\", \"subtitle\":\"\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-auto.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-auto.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
+		case "casa":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Protezione Casa\", \"image_url\":\"https://sella-bot.herokuapp.com/img/casa.png\", \"subtitle\":\"Casa InChiaro prodotto modulare che può proteggere in caso di:\\ndanni all'abitazione e al contenuto, con tutte le coperture associate alla garanzia incendio;\\nfurto, ma anche rapina o scippo ai danni dei componenti del nucleo familiare;\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-casa.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-casa.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
+		case "famiglia":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Protezione Famiglia\", \"image_url\":\"https://sella-bot.herokuapp.com/img/family.png\", \"subtitle\":\"Con Famiglia InChiaro:\\nLe prestazioni assicurate sono:\\nRC del capo famiglia.\\ntutela legale (attiva e passiva).\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-famiglia.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/protezione/protezione-famiglia.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
 		case "call our representative":
 			jsonResponse = String.format(
 					"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
@@ -145,6 +160,16 @@ public class QnaResponse {
 			searchString="list investimenti";
 		}else if(textSearch.contains("finan")) {
 			searchString="list finanziamenti";
+		}else if(textSearch.contains("protezione")) {
+			searchString="list protezione";
+		}else if(textSearch.contains("persona")) {
+			searchString="persona";
+		}else if(textSearch.contains("famiglia")) {
+			searchString="famiglia";
+		}else if(textSearch.contains("auto")) {
+			searchString="auto";
+		}else if(textSearch.contains("casa")) {
+			searchString="casa";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao") || textSearch.contains("hi")|| textSearch.contains("hai") || textSearch.contains("hello") || textSearch.contains("helo")) {
 			searchString="hi";
 		}else if(textSearch.contains("thank") || textSearch.contains("bye")|| textSearch.contains("grazie")) {
