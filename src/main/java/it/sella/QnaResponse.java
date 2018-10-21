@@ -169,6 +169,16 @@ public class QnaResponse {
 			searchString="auto";
 		}else if(textSearch.contains("casa")) {
 			searchString="casa";
+		}else if(textSearch.contains("sella.it") || textSearch.contains("prestito sella")) {
+			searchString="prestito sella.it";
+		}else if(textSearch.contains("mutui")) {
+			searchString="mutui";
+		}else if(textSearch.contains("prestito d’onore") || textSearch.contains("prestito donore")||textSearch.contains("donore")) {
+			searchString="prestito d’onore";
+		}else if(textSearch.contains("cessione del quinto") || textSearch.contains("cessione")||textSearch.contains("quinto")) {
+			searchString="cessione del quinto";
+		}else if(textSearch.contains("ambiente")) {
+			searchString="prestidea ambiente";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao") || textSearch.contains("hi")|| textSearch.contains("hai") || textSearch.contains("hello") || textSearch.contains("helo")) {
 			searchString="hi";
 		}else if(textSearch.contains("thank") || textSearch.contains("bye")|| textSearch.contains("grazie")) {
@@ -190,4 +200,7 @@ public class QnaResponse {
 		return searchString;
 	}
 }
+
+
+
 
