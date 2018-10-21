@@ -67,10 +67,24 @@ public class QnaResponse {
 		case "all investimenti details":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
 			break;
-		case "all finanziamenti":
-			jsonResponse="";
+		case "list finanziamenti":
+			jsonResponse="{ \"recipient\":{ \"id\":\"1841499292614128\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Prestito Sella.it\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestito_sella_it.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Prestito Sella.it\" } ] }, { \"title\":\"Mutui\", \"image_url\":\"https://sella-bot.herokuapp.com/img/mutui.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Mutui\" } ] }, { \"title\":\"Prestito d\\’onore\", \"image_url\":\"https://sella-bot.herokuapp.com/img/loan_student.png\", \"subtitle\":\"VISA\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestito donore\" } ] }, { \"title\":\"Cessione del quinto\", \"image_url\":\"https://sella-bot.herokuapp.com/img/Cessione_del_quinto.png\", \"subtitle\":\"MASTER\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"cessione del quinto\" } ] }, { \"title\":\"Prestidea Ambiente\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestidea_ambiente.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestidea ambiente\" } ] } ] } } } }";
 		break;
-		
+		case "prestito sella":
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
+		break;
+		case "mutui":
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
+		break;
+		case "prestito d'onore":
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
+		break;
+		case "cessione del quinto":
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
+		break;
+		case "prestidea ambiente":
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
+		break;
 		case "all investimenti details1":
 			jsonResponse ="";
 			break;
