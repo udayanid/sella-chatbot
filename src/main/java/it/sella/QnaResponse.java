@@ -32,7 +32,8 @@ public class QnaResponse {
 		    jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Our Carte!!!\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"CARTE DI DEBITO\", \"payload\":\"all carte details\" }, { \"type\":\"postback\", \"title\":\"CARTE DI CREDITO\", \"payload\":\"all carte details\" }, { \"type\":\"postback\", \"title\":\"HYPE PLUS\", \"payload\":\"all carte details\" }  ] } } } }";
 		break;
 		case "list investimenti":
-			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Our investimenti!!!\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"CONSULENZA INVESTIMENTI\", \"payload\":\"all investimenti details\" }, { \"type\":\"postback\", \"title\":\"SELLA EVOLUTION GESTIONI PATRIMONIALI\", \"payload\":\"all investimenti details\" }, { \"type\":\"postback\", \"title\":\"SELLA MULTISOLUTION\", \"payload\":\"all investimenti details\" } ] } } } }";
+			//jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Our investimenti!!!\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"CONSULENZA INVESTIMENTI\", \"payload\":\"all investimenti details\" }, { \"type\":\"postback\", \"title\":\"SELLA EVOLUTION GESTIONI PATRIMONIALI\", \"payload\":\"all investimenti details\" }, { \"type\":\"postback\", \"title\":\"SELLA MULTISOLUTION\", \"payload\":\"all investimenti details\" } ] } } } }";
+			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Consulenza Servizi investimento\", \"image_url\":\"https://sella-bot.herokuapp.com/img/consulenza_investimenti.png\", \"subtitle\":\"Investimenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"consulenza\" } ] }, { \"title\":\"Sella Evolution Gestioni Patrimoniali\", \"image_url\":\"https://sella-bot.herokuapp.com/img/sella_evolution.png\", \"subtitle\":\"Investimenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"evolution\" } ] }, { \"title\":\"Fondi d'investimento\", \"image_url\":\"https://sella-bot.herokuapp.com/img/fondi.png\", \"subtitle\":\"Investimenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"fondi\" } ] }, { \"title\":\"Investimenti PIR\", \"image_url\":\"https://sella-bot.herokuapp.com/img/investimenti_pir.png\", \"subtitle\":\"Investimenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"pir\" } ] } ] } } } }";
 			break;
 		case "websella":
 			jsonResponse = " { \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"WEBSELLA\", \"image_url\":\"https://sella-bot.herokuapp.com/img/conti_correnti_bse.gif\", \"subtitle\":\"Canone mensile zero euro  0 Euro\\n Una carta di debito a zero euro\\n operatività 24h/24h \\n13h al giorno di assistenza\\n4 prelievi gratuiti al mese da tutti gli ATM UE\\n300 succursali\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/onboarding/fe/03268/contowebsella/#/start/CONTO_WEBSELLA\", \"title\":\"Onboarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
@@ -64,11 +65,20 @@ public class QnaResponse {
 		case "welcome msg":
 			jsonResponse =String.format("{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s, Welcome to Sella bot, How can I help you? \" } }","Hi "+userDetail.getFirstName()+" "+userDetail.getLastName());
 			break;		
-		case "all investimenti details":
-			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
-			break;
+		case "consulenza":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Consulenza investimenti\", \"image_url\":\"https://sella-bot.herokuapp.com/img/consulenza_investimenti.png\", \"subtitle\":\"Il miglior modo che conosciamo per fare banca è dedicarci a te, completamente\\nUn professionista a tua disposizione\\nDedizione nel curare i tuoi interessi\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/consulenza-servizi-investimento.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/consulenza-servizi-investimento.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
+		case "evolution":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Sella Evolution Gestioni Patrimoniali\", \"image_url\":\"https://sella-bot.herokuapp.com/img/sella_evolution.png\", \"subtitle\":\"Per i tuoi risparmi scegli Sella Evolution,\\nil nuovo servizio pensato per raggiungere i tuoi obiettivi\\nAttraverso un questionario online definiamo il tuo profilo di investitore\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/gestione-patrimoniale.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/gestione-patrimoniale.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
+		case "fondi":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Fondi d'investimento\", \"image_url\":\"https://sella-bot.herokuapp.com/img/fondi.png\", \"subtitle\":\"L’eccellenza dei fondi sul mercato e le società di gestione che hanno dimostrato nel tempo la migliore strategia\\nPiù di 1800 fondi\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/fondi-sicav-pac.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/fondi-sicav-pac.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } } ";
+		break;
+		case "pir":
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Investimenti PIR\", \"image_url\":\"https://sella-bot.herokuapp.com/img/investimenti_pir.png\", \"subtitle\":\"I Piani individuali di Risparmio\\nLimiti di investimento sui PIR\\nLa proposta di Banca Sella\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/pir.jsp\", \"title\":\"For More Details\" }, { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/investimenti-e-risparmio/pir.jsp\", \"title\":\"On Boarding\" }, { \"type\":\"postback\", \"title\":\"Any Other Query\", \"payload\":\"call our representative\" } ] } ] } } } }";
+		break;
 		case "list finanziamenti":
-			jsonResponse="{ \"recipient\":{ \"id\":\"1841499292614128\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Prestito Sella.it\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestito_sella_it.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Prestito Sella.it\" } ] }, { \"title\":\"Mutui\", \"image_url\":\"https://sella-bot.herokuapp.com/img/mutui.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Mutui\" } ] }, { \"title\":\"Prestito d\\’onore\", \"image_url\":\"https://sella-bot.herokuapp.com/img/loan_student.png\", \"subtitle\":\"VISA\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestito donore\" } ] }, { \"title\":\"Cessione del quinto\", \"image_url\":\"https://sella-bot.herokuapp.com/img/Cessione_del_quinto.png\", \"subtitle\":\"MASTER\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"cessione del quinto\" } ] }, { \"title\":\"Prestidea Ambiente\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestidea_ambiente.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestidea ambiente\" } ] } ] } } } }";
+			jsonResponse="{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"generic\", \"elements\":[ { \"title\":\"Prestito Sella.it\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestito_sella_it.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Prestito Sella.it\" } ] }, { \"title\":\"Mutui\", \"image_url\":\"https://sella-bot.herokuapp.com/img/mutui.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"Mutui\" } ] }, { \"title\":\"Prestito d\\’onore\", \"image_url\":\"https://sella-bot.herokuapp.com/img/loan_student.png\", \"subtitle\":\"VISA\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestito donore\" } ] }, { \"title\":\"Cessione del quinto\", \"image_url\":\"https://sella-bot.herokuapp.com/img/Cessione_del_quinto.png\", \"subtitle\":\"MASTER\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"cessione del quinto\" } ] }, { \"title\":\"Prestidea Ambiente\", \"image_url\":\"https://sella-bot.herokuapp.com/img/prestidea_ambiente.png\", \"subtitle\":\"Finanziamenti\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"View\", \"payload\":\"prestidea ambiente\" } ] } ] } } } }";
 		break;
 		case "prestito sella":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
@@ -85,9 +95,6 @@ public class QnaResponse {
 		case "prestidea ambiente":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"For more details please click this button!!! \", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it/banca-online/privati/conti-e-carte/websella.jsp?fbclid=IwAR3yZoet66tQB-z43deD7yr3cZt8v-yhLiiXPLR0vcX3Kxb9ZZTPcYxN3NI\", \"title\":\"Visit Our Website\" } ] } } } }";
 		break;
-		case "all investimenti details1":
-			jsonResponse ="";
-			break;
 		case "call our representative":
 			jsonResponse = String.format(
 					"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
@@ -135,12 +142,24 @@ public class QnaResponse {
 			searchString="visa classic";
 		}else if(textSearch.contains("master")) {
 			searchString="mastercard classic";
-		}else if(textSearch.contains("invest") && !(textSearch.equals("all investimenti details"))) {
+		}else if(textSearch.contains("invest")) {
 			searchString="list investimenti";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao") || textSearch.contains("hi")|| textSearch.contains("hai") || textSearch.contains("hello") || textSearch.contains("helo")) {
 			searchString="hi";
 		}else if(textSearch.contains("thank") || textSearch.contains("bye")|| textSearch.contains("grazie")) {
 			searchString="bye";
+		}
+		else if(textSearch.contains("consulenza")) {
+			searchString="consulenza";
+		}
+		else if(textSearch.contains("evolution")) {
+			searchString="evolution";
+		}
+		else if(textSearch.contains("fondi")) {
+			searchString="fondi";
+		}
+		else if(textSearch.contains("pir")) {
+			searchString="pir";
 		}
 		logger.info("The actual keyword is{}",searchString);
 		return searchString;
