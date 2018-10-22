@@ -72,7 +72,7 @@ public class SellaFbController {
 		logger.info("url>>>>{}",url);
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);	
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);	
 		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);		
 		return restTemplate.postForObject(url, entity, String.class);
 	}
