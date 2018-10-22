@@ -129,7 +129,8 @@ public class QnaResponse {
 		}
 		jsonResponse = jsonResponse.replace("recipientId", senderId);
 		logger.info("jsonresponse>>>>{}", jsonResponse);
-		return jsonResponse;
+		logger.info("jsonresponse>>>>{}",jsonResponse);
+		return jsonResponse.replace("è","\u00E8" );
 	}
 	
 	private static String getActualKeyword(String textSearch) {
@@ -177,7 +178,7 @@ public class QnaResponse {
 			searchString="prestito d’onore";
 		}else if(textSearch.contains("cessione del quinto") || textSearch.contains("cessione")||textSearch.contains("quinto")) {
 			searchString="cessione del quinto";
-		}else if(textSearch.contains("ambiente")) {
+		}else if(textSearch.contains("ambiente") || textSearch.contains("prestidea")) {
 			searchString="prestidea ambiente";
 		}else if(textSearch.contains("morning") || textSearch.contains("noon")|| textSearch.contains("evening")||textSearch.contains("ciao")||textSearch.contains("caio")||textSearch.contains("ciao") || textSearch.contains("hi")|| textSearch.contains("hai") || textSearch.contains("hello") || textSearch.contains("helo")) {
 			searchString="hi";
