@@ -131,7 +131,6 @@ public class QnaResponse {
 		}
 		jsonResponse = jsonResponse.replace("recipientId", senderId);
 		logger.info("jsonresponse>>>>{}", jsonResponse);
-		logger.info("jsonresponse>>>>{}",jsonResponse);		 
 		byte[] utf8Bytes;
 		try {
 			utf8Bytes = jsonResponse.getBytes("UTF8");
