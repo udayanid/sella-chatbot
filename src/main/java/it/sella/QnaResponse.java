@@ -134,7 +134,7 @@ public class QnaResponse {
 		byte[] utf8Bytes;
 		try {
 			utf8Bytes = jsonResponse.getBytes("UTF8");
-			return new String(utf8Bytes,"UTF8");
+			return new String(utf8Bytes,"UTF8").replace("è", "e");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
