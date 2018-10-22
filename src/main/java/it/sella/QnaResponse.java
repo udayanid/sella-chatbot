@@ -1,5 +1,7 @@
 package it.sella;
 
+import java.io.UnsupportedEncodingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,8 +131,16 @@ public class QnaResponse {
 		}
 		jsonResponse = jsonResponse.replace("recipientId", senderId);
 		logger.info("jsonresponse>>>>{}", jsonResponse);
-		logger.info("jsonresponse>>>>{}",jsonResponse);
-		return jsonResponse.replace("è","\u00E8" );
+		logger.info("jsonresponse>>>>{}",jsonResponse);		 
+		byte[] utf8Bytes;
+		try {
+			utf8Bytes = jsonResponse.getBytes("UTF8");
+			return new String(utf8Bytes,"UTF8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return jsonResponse;
+		
 	}
 	
 	private static String getActualKeyword(String textSearch) {
