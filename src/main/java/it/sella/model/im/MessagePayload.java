@@ -71,4 +71,10 @@ public class MessagePayload {
 		this.eventdata.add(eventdatum);
 	}
 
+	@Override
+	public String toString() {
+		return "MessagePayload [action=" + action + ", chatid=" + chatid + ", idevent=" + idevent
+				+ ", sourceIntentCode=" + sourceIntentCode + ", eventdata=" + eventdata + "]";
+	}
+
 }

@@ -154,7 +154,7 @@ public class SellaFbController {
 
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
 
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 10; i++) {
 			logger.info("poll count{}",i+1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
 			int count=0;
