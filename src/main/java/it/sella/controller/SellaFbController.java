@@ -26,6 +26,7 @@ import it.sella.model.im.Eventdatum;
 import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
 import it.sella.model.im.PollResponse;
+import it.sella.model.im.Result;
 
 @RestController
 public class SellaFbController {
@@ -70,7 +71,7 @@ public class SellaFbController {
 		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		UserDetail userDetail=getUserDetail(senderId);
 		sendMessageFromIM(senderId, textMessage, userDetail);
-		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
+		//sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
 	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
@@ -98,16 +99,8 @@ public class SellaFbController {
 	
 	private String getSenderActionResonse(final String senderAction, final String senderId) {
 		return String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"sender_action\":\"%s\" }", senderId,senderAction);
-	}
+	}	
 	
-	
-	
-	
-	/*public String getCarouselJson() {
-		String jsonResponse="{   \"recipient\":{     \"id\":\"recipientid\"   },   \"message\":{     \"attachment\":{       \"type\":\"template\",       \"payload\":{         \"template_type\":\"generic\",         \"elements\":[            {             \"title\":\"Welcome!\",             \"image_url\":\" localhost:8080/img/conti_correnti_bse.gif\",             \"subtitle\":\"We have the right hat for everyone.\",             \"default_action\": {               \"type\": \"web_url\",               \"url\": \"https://petersfancybrownhats.com/view?item=103\",               \"webview_height_ratio\": \"tall\"             },             \"buttons\":[               {                 \"type\":\"web_url\",                 \"url\":\"https://petersfancybrownhats.com\",                 \"title\":\"View Website\"               },{                 \"type\":\"postback\",                 \"title\":\"Start Chatting\",                 \"payload\":\"You have invoked Welcome\"               }                          ]                }, 		   {             \"title\":\"NEW!\",             \"image_url\":\"https://chatbot-hook.herokuapp.com/img/image2.jpg\",             \"subtitle\":\"NEW subtitle.\",             \"default_action\": {               \"type\": \"web_url\",               \"url\": \"https://petersfancybrownhats.com/view?item=103\",               \"webview_height_ratio\": \"tall\"             },             \"buttons\":[               {                 \"type\":\"web_url\",                 \"url\":\"https://petersfancybrownhats.com\",                 \"title\":\"View Website\"               },{                 \"type\":\"postback\",                 \"title\":\"Start Chatting\",                 \"payload\":\"you have invoked New \"               }                          ]                }         ]       }     }   } }";
-		logger.info("My Json Carousel::"+jsonResponse);
-		return jsonResponse;
-	}*/
 
 	//to get the json to gson object
 	private RequestPayload getResponseObject(final String responsePayload) {		
@@ -165,12 +158,17 @@ public class SellaFbController {
 		for (int i = 0; i < 16; i++) {
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
 			if (pollResponse.getResults().size() > 0) {
-				if (pollResponse.getResults().get(0).getAnswer() != null) {
+				Result result = pollResponse.getResults().get(0);
+				String answer = result.getAnswer();
+				if (answer != null) {
 					// ResponseEntity.ok(pollResponse.getResults().get(0).getAnswer());
-					String imResponse = String.format(
-							"{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,
-							pollResponse.getResults().get(0).getAnswer());
+					
+					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,answer);
 					sendMessage(imResponse);
+					if(result.getLink()!=null) {
+						imResponse=String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",receipientId,result.getLink());
+						sendMessage(imResponse);
+					}
 				}
 			}
 		}
