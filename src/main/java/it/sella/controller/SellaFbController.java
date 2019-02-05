@@ -1,6 +1,8 @@
 
 package it.sella.controller;
 
+import javax.xml.ws.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -20,13 +22,19 @@ import it.sella.JsonUtil;
 import it.sella.QnaResponse;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
+import it.sella.model.im.Eventdatum;
+import it.sella.model.im.MessagePayload;
+import it.sella.model.im.NewChatInfo;
+import it.sella.model.im.PollResponse;
 
 @RestController
 public class SellaFbController {
-
+    //https://sella.it/sellabot/chatinit?nome=nome1&cognome=cognome1&email=test@sella.it&CHANNEL=Sella_sito_free
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
 	private static final String ACCESS_TOKEN = "EAADwyglYT3gBACIGJ5VroCVMAiZAtbW2zsKihP6iClcAeCDrPgusQQNuI6jPvEshBF0TgwW2CzVRIQZCf5ZC6uYe8CXMTY8cnat4OfBgJzsWZAZCRDWaw9N29ZCsy2KZCcCS5mvRmooIkbB3TclHrJIAZAah0SPJTVJ2g2ZB9fExG9w0QmPyWRyQR";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
+	private static final String IM_LOGIN_URL = "https://sella.it/sellabot/chatinit?nome=%s&cognome=%s&email=test3@sella.it&CHANNEL=Sella_sito_free";
+
 	private static final Logger logger = LoggerFactory.getLogger(SellaFbController.class);
 
 	@GetMapping("/webhook")
@@ -61,6 +69,7 @@ public class SellaFbController {
 		senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		UserDetail userDetail=getUserDetail(senderId);
+		
 		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
 	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
@@ -85,6 +94,8 @@ public class SellaFbController {
 		return userDetail;
 	}
 	
+	
+	
 	private String getSenderActionResonse(final String senderAction, final String senderId) {
 		return String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"sender_action\":\"%s\" }", senderId,senderAction);
 	}
@@ -98,10 +109,12 @@ public class SellaFbController {
 		return jsonResponse;
 	}*/
 
+	//to get the json to gson object
 	private RequestPayload getResponseObject(final String responsePayload) {		
 		return JsonUtil.getInstance().fromJson(responsePayload, RequestPayload.class);
 	}
 	
+	//to get the requested eventype
 	private String getEventType(RequestPayload requestPayload) {
 		String eventType="TextEvent";
 		if(requestPayload.getEntry().get(0).getMessaging().get(0).getPostback()!=null) {
@@ -110,5 +123,57 @@ public class SellaFbController {
 		logger.info("The requested event Tyepe {}",eventType);
 		return eventType;		
 	}
+	
+	public void sendMessageFromIM(String receipientId, String textMessage, UserDetail userDetail) {
+		String url = String.format(IM_LOGIN_URL, userDetail.getFirstName(), userDetail.getLastName());
+		logger.info("IM url>>>>{}", url);		
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> indexHtml = restTemplate.getForEntity(url, String.class);
+		if (indexHtml.getStatusCode() != HttpStatus.FOUND)
+			// return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			logger.info("The HttpsLoginStatus {}", "Not Successful");
+
+		HttpHeaders headers = indexHtml.getHeaders();
+		String cookieInfo = headers.getFirst("Set-Cookie");
+		final String chatUrl = "https://sella.it/sellabot/execute/user/chat";
+		String newChatPayload = "{\"action\":\"newchat\",\"sourceIntentCode\":\"\"}";
+		restTemplate = new RestTemplate();
+		headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Cookie", cookieInfo);
+
+		HttpEntity<String> chatEntity = new HttpEntity<>(newChatPayload, headers);
+		NewChatInfo newChatInfo = restTemplate.postForEntity(chatUrl, chatEntity, NewChatInfo.class).getBody();
+
+		MessagePayload messagepayload = new MessagePayload();
+		messagepayload.setAction("chatevent");
+		messagepayload.setIdevent("chatmessage");
+		messagepayload.setChatid(newChatInfo.getChatid());
+		Eventdatum eventdatum = new Eventdatum();
+		eventdatum.setName("message");
+		eventdatum.setValue(textMessage);
+		messagepayload.addEventDatum(eventdatum);
+		HttpEntity<MessagePayload> messageEntity = new HttpEntity<>(messagepayload, headers);
+		restTemplate.postForEntity(chatUrl, messageEntity, String.class);
+
+		String pollUrl = "https://sella.it/sellabot/execute/user/poll";
+		String pollPayload = String.format("{\"chatid\":\"%s\"}", newChatInfo.getChatid());
+
+		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
+		StringBuffer stringBuffer = new StringBuffer();
+
+		for (int i = 0; i < 16; i++) {
+			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
+			if (pollResponse.getResults().size() > 0) {
+				if (pollResponse.getResults().get(0).getAnswer() != null) {
+					// ResponseEntity.ok(pollResponse.getResults().get(0).getAnswer());
+					String imResponse = String.format(
+							"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
+							pollResponse.getResults().get(0).getAnswer());
+					sendMessage(imResponse);
+				}
+			}
+		}
+	}	
 	
 }
