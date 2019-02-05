@@ -69,7 +69,7 @@ public class SellaFbController {
 		senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		UserDetail userDetail=getUserDetail(senderId);
-		
+		sendMessageFromIM(senderId, textMessage, userDetail);
 		sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
 	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
@@ -168,7 +168,7 @@ public class SellaFbController {
 				if (pollResponse.getResults().get(0).getAnswer() != null) {
 					// ResponseEntity.ok(pollResponse.getResults().get(0).getAnswer());
 					String imResponse = String.format(
-							"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
+							"{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,
 							pollResponse.getResults().get(0).getAnswer());
 					sendMessage(imResponse);
 				}
