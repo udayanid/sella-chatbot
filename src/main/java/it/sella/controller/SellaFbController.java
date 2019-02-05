@@ -1,8 +1,6 @@
 
 package it.sella.controller;
 
-import javax.xml.ws.Response;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import it.sella.JsonUtil;
-import it.sella.QnaResponse;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
 import it.sella.model.im.Eventdatum;
@@ -122,10 +119,10 @@ public class SellaFbController {
 		logger.info("IM url>>>>{}", url);		
 		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> indexHtml = restTemplate.getForEntity(url, String.class);
-		if (indexHtml.getStatusCode() != HttpStatus.FOUND)
-			// return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-			logger.info("The HttpsLoginStatus {}", "Not Successful");
-
+	    logger.info("The HttpsLoginStatus {}",indexHtml.getStatusCode());
+		if (indexHtml.getStatusCode() != HttpStatus.FOUND) {
+			logger.info("The HttpsLoginStatus::: failed");
+		}		
 		HttpHeaders headers = indexHtml.getHeaders();
 		String cookieInfo = headers.getFirst("Set-Cookie");
 		final String chatUrl = "https://sella.it/sellabot/execute/user/chat";
@@ -137,6 +134,7 @@ public class SellaFbController {
 
 		HttpEntity<String> chatEntity = new HttpEntity<>(newChatPayload, headers);
 		NewChatInfo newChatInfo = restTemplate.postForEntity(chatUrl, chatEntity, NewChatInfo.class).getBody();
+		logger.info("ChatId:::{}",newChatInfo.getChatid());
 
 		MessagePayload messagepayload = new MessagePayload();
 		messagepayload.setAction("chatevent");
@@ -147,22 +145,26 @@ public class SellaFbController {
 		eventdatum.setValue(textMessage);
 		messagepayload.addEventDatum(eventdatum);
 		HttpEntity<MessagePayload> messageEntity = new HttpEntity<>(messagepayload, headers);
+		logger.info("messagePayload::{}",messagepayload.toString());
 		restTemplate.postForEntity(chatUrl, messageEntity, String.class);
 
 		String pollUrl = "https://sella.it/sellabot/execute/user/poll";
 		String pollPayload = String.format("{\"chatid\":\"%s\"}", newChatInfo.getChatid());
+		logger.info("pllpayload::{}",pollPayload);
 
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
-		StringBuffer stringBuffer = new StringBuffer();
 
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < 8; i++) {
+			logger.info("poll count{}",i+1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
+			int count=0;
 			if (pollResponse.getResults().size() > 0) {
+				count++;
 				Result result = pollResponse.getResults().get(0);
 				String answer = result.getAnswer();
+				logger.info("ResultArray{}",count);
+				logger.info("Answer:::{}",answer);
 				if (answer != null) {
-					// ResponseEntity.ok(pollResponse.getResults().get(0).getAnswer());
-					
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,answer);
 					sendMessage(imResponse);
 					if(result.getLink()!=null) {
