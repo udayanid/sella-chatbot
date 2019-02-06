@@ -83,7 +83,8 @@ public class ImController {
 				System.out.println("Result:::"+result);
 				if(result.getAnswer()!=null || result.getMessage()!=null)	{
 					String responseString = result.getAnswer()!=null?result.getAnswer():result.getMessage();
-					 return ResponseEntity.ok(responseString);
+					stringBuffer.append(responseString).append(", ");
+					 //return ResponseEntity.ok(responseString);
 				 }
 			}			 
 		}

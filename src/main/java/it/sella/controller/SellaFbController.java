@@ -181,20 +181,35 @@ public class SellaFbController {
 			logger.info("poll count{}",i+1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
 			logger.info("pollresponse count:::{}",pollResponse.getResults().size());
+			StringBuilder responseAnswer=new StringBuilder();
+			StringBuilder responseMessage=new StringBuilder();
+			String link=null;
 			for(Result result:pollResponse.getResults()) {
 				logger.info("Result:::{}",result);
 				final String answer = result.getAnswer();
-				final String message = result.getMessage();				
-				if(answer!=null || message!=null)	{
-					final String responseString = result.getAnswer()!=null?answer:message;
-					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseString);
-					sendMessage(imResponse);
+				final String message = result.getMessage();	
+				if(answer!=null) {
+					responseAnswer.append(answer);
 					if(result.getLink()!=null) {
-						imResponse=String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",receipientId,result.getLink());
-						sendMessage(imResponse);
+						link=result.getLink();
 					}
-				 }
-			}			 
+				}else if(message!=null) {
+					responseMessage.append(message).append(", ");
+				}
+			}	
+			if(!responseAnswer.toString() .equals(""))	{
+				String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseAnswer);
+				sendMessage(imResponse);
+				if(link!=null) {
+					imResponse=String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",receipientId,link);
+					sendMessage(imResponse);
+				}
+			 }
+			if(!responseMessage.toString().equals("")) {
+				String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseMessage);
+				sendMessage(imResponse);
+			}
+			
 		}
 	}	
 	
