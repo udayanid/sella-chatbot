@@ -27,5 +27,11 @@ public class Eventdatum {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	@Override
+	public String toString() {
+		return "Eventdatum [name=" + name + ", value=" + value + "]";
+	}
+
 
 }
