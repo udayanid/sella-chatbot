@@ -1,10 +1,13 @@
 
 package it.sella.controller;
 
+import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -162,7 +165,7 @@ public class SellaFbController {
 				count++;
 				Result result = pollResponse.getResults().get(0);
 				String answer = result.getAnswer();
-				logger.info("ResultArray{}",count);
+				logger.info("ResultArray{} AND COUNT{}",result,count++);
 				logger.info("Answer:::{}",answer);
 				if (answer != null) {
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,answer);
