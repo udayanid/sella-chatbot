@@ -186,7 +186,7 @@ public class SellaFbController {
 				final String answer = result.getAnswer();
 				final String message = result.getMessage();				
 				if(answer!=null || message!=null)	{
-					final String responseString = result.getAnswer()!=null?result.getAnswer():result.getMessage();
+					final String responseString = result.getAnswer()!=null?answer:message;
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseString);
 					sendMessage(imResponse);
 					if(result.getLink()!=null) {
