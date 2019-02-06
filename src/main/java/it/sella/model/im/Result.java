@@ -10,7 +10,7 @@ public class Result {
 	private String sender;
 	@SerializedName("message")
 	@Expose
-	private Object message;
+	private String message;
 	@SerializedName("answer")
 	@Expose
 	private String answer;
@@ -42,13 +42,13 @@ public class Result {
 
 	public void setSender(String sender) {
 		this.sender = sender;
-	}
+	}	
 
-	public Object getMessage() {
+	public String getMessage() {
 		return message;
 	}
 
-	public void setMessage(Object message) {
+	public void setMessage(String message) {
 		this.message = message;
 	}
 

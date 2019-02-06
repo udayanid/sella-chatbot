@@ -157,25 +157,44 @@ public class SellaFbController {
 
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
 
-		for (int i = 0; i < 16; i++) {
+//		for (int i = 0; i < 16; i++) {
+//			logger.info("poll count{}",i+1);
+//			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
+//			int count=0;
+//			if (pollResponse.getResults().size() > 0) {
+//				count++;
+//				Result result = pollResponse.getResults().get(0);
+//				String answer = result.getAnswer();
+//				logger.info("ResultArray{} AND COUNT{}",result,count++);
+//				logger.info("Answer:::{}",answer);
+//				if (answer != null) {
+//					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,answer);
+//					sendMessage(imResponse);
+//					if(result.getLink()!=null) {
+//						imResponse=String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",receipientId,result.getLink());
+//						sendMessage(imResponse);
+//					}
+//				}
+//			}
+//		}
+		for(int i=0;i<10;i++) {	
 			logger.info("poll count{}",i+1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
-			int count=0;
-			if (pollResponse.getResults().size() > 0) {
-				count++;
-				Result result = pollResponse.getResults().get(0);
-				String answer = result.getAnswer();
-				logger.info("ResultArray{} AND COUNT{}",result,count++);
-				logger.info("Answer:::{}",answer);
-				if (answer != null) {
-					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,answer);
+			logger.info("pollresponse count:::{}",pollResponse.getResults().size());
+			for(Result result:pollResponse.getResults()) {
+				logger.info("Result:::{}",result);
+				final String answer = result.getAnswer();
+				final String message = result.getMessage();				
+				if(answer!=null || message!=null)	{
+					final String responseString = result.getAnswer()!=null?result.getAnswer():result.getMessage();
+					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseString);
 					sendMessage(imResponse);
 					if(result.getLink()!=null) {
 						imResponse=String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",receipientId,result.getLink());
 						sendMessage(imResponse);
 					}
-				}
-			}
+				 }
+			}			 
 		}
 	}	
 	

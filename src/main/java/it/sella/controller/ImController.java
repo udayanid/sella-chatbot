@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +16,7 @@ import it.sella.model.im.Eventdatum;
 import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
 import it.sella.model.im.PollResponse;
+import it.sella.model.im.Result;
 
 @RestController
 public class ImController {
@@ -33,17 +33,15 @@ public class ImController {
 		
 		ResponseEntity<String> indexHtml= restTemplate.getForEntity(url,String.class);
 		
-		if(indexHtml.getStatusCode()!=HttpStatus.FOUND)
+		if(indexHtml.getStatusCode()!=HttpStatus.FOUND) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-			
+		 }else {
+			 logger.info("loggedin successfully");
+		 }			
 		
-		HttpHeaders headers=indexHtml.getHeaders();
-		
-		String cookieInfo=headers.getFirst("Set-Cookie");
-		
-		final String chatUrl="https://sella.it/sellabot/execute/user/chat";
-		
-				
+		HttpHeaders headers=indexHtml.getHeaders();		
+		String cookieInfo=headers.getFirst("Set-Cookie");		
+		final String chatUrl="https://sella.it/sellabot/execute/user/chat";				
 		
 		String newChatPayload="{\"action\":\"newchat\",\"sourceIntentCode\":\"\"}";
 		restTemplate=new RestTemplate();
@@ -78,13 +76,16 @@ public class ImController {
 		 StringBuffer stringBuffer=new StringBuffer();
 		 
 		
-		for(int i=0;i<16;i++) {			
+		for(int i=0;i<10;i++) {			
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
-			 if(pollResponse.getResults().size()>0) {
-				 if(pollResponse.getResults().get(0).getAnswer()!=null)
-						 return ResponseEntity.ok(pollResponse.getResults().get(0).getAnswer());
-				  
-			 }
+			System.out.println("pollresponse count:::"+pollResponse.getResults().size());
+			for(Result result:pollResponse.getResults()) {
+				System.out.println("Result:::"+result);
+				if(result.getAnswer()!=null || result.getMessage()!=null)	{
+					String responseString = result.getAnswer()!=null?result.getAnswer():result.getMessage();
+					 return ResponseEntity.ok(responseString);
+				 }
+			}			 
 		}
 		return  ResponseEntity.ok(stringBuffer.toString());
 		
