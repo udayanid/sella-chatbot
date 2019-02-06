@@ -177,7 +177,7 @@ public class SellaFbController {
 //				}
 //			}
 //		}
-		for(int i=0;i<8;i++) {	
+		for(int i=0;i<16;i++) {	
 			logger.info("poll count{}",i+1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
 			logger.info("pollresponse count:::{}",pollResponse.getResults().size());
