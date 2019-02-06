@@ -197,7 +197,12 @@ public class SellaFbController {
 					responseMessage.append(message).append(", ");
 				}
 			}	
+			logger.info("response answer11:::{}",responseAnswer);
+			logger.info("response message11:::{}",responseMessage);
+			logger.info("response link:::{}",link);
+
 			if(!responseAnswer.toString() .equals(""))	{
+				logger.info("response answer:::{}",responseAnswer);
 				String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseAnswer);
 				sendMessage(imResponse);
 				if(link!=null) {
@@ -206,6 +211,7 @@ public class SellaFbController {
 				}
 			 }
 			if(!responseMessage.toString().equals("")) {
+				logger.info("response message:::{}",responseMessage);
 				String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",receipientId,responseMessage);
 				sendMessage(imResponse);
 			}
