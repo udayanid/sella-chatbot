@@ -242,6 +242,7 @@ public class SellaFbController {
 		messagepayload.addEventDatum(eventdatum);
 		logger.info("<<<<<<<<<<<<<<<<messagePayload::{}>>>>>>>>>>>",messagepayload);
 		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Cookie",cookieInfo);
 		final HttpEntity<MessagePayload> messageEntity = new HttpEntity<>(messagepayload, headers);
 		final RestTemplate restTemplate = new RestTemplate();
@@ -254,6 +255,7 @@ public class SellaFbController {
 		logger.info("<<<<<<<<<pollpayload::{}>>>>>>>>>>>>>>>",pollPayload);
 		final RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Cookie",cookieInfo);
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
 		for(int i=0;i<totalPolls;i++) {	
