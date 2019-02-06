@@ -70,7 +70,7 @@ public class SellaFbController {
 		senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 		logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		UserDetail userDetail=getUserDetail(senderId);
-		sendMessageFromIM(senderId, textMessage, userDetail);
+		sendMessageFromIM(senderId, textMessage.trim(), userDetail);
 		//sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
 	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
@@ -153,7 +153,7 @@ public class SellaFbController {
 
 		String pollUrl = "https://sella.it/sellabot/execute/user/poll";
 		String pollPayload = String.format("{\"chatid\":\"%s\"}", newChatInfo.getChatid());
-		logger.info("pllpayload::{}",pollPayload);
+		logger.info("pollpayload::{}",pollPayload);
 
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
 
