@@ -20,8 +20,6 @@ import org.springframework.web.client.RestTemplate;
 
 import it.sella.BotSession;
 import it.sella.JsonUtil;
-import it.sella.model.Entry;
-import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
 import it.sella.model.im.Eventdatum;
@@ -58,47 +56,46 @@ public class SellaFbController {
 		logger.info("Response payload:{} && signature: {}", payLoad, signature);
 		RequestPayload reqPayload=getResponseObject(payLoad);
 		logger.info("reqpayload>>>>{}",reqPayload);
-		String eventType=getEventType(reqPayload);		
-		for (Entry entry : reqPayload.getEntry()) {
-			for (Messaging messaging : entry.getMessaging()) {
-				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
-				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
-				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
-				logger.info("<<<<<<senderId>>>>{},RecipientId>>>{}", senderId, recipientId);
-				BotSession botSession = (BotSession) session.getAttribute(recipientId);
-				final UserDetail userDetail = getUserDetail(senderId);
-				if (botSession == null) {
-					ResponseEntity<String> imLoginResponseEntity = imLogin(userDetail);
-					if (imLoginResponseEntity.getStatusCode() != HttpStatus.FOUND) {
-						logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
-					} else {
-						logger.info("<<<<<<<<<<Loggedin successfully>>>>>>>>>");
-						botSession = new BotSession();
-						botSession.setFbReceipientId(recipientId);
-						botSession.setFbSenderId(senderId);
-						botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
-						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
-						session.setAttribute(recipientId, botSession);
-					}
-				}
-				logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
-				String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
-				logger.info("<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>", senderActionAcknowledge);
-				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
-				logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>", senderActionAcknowledge);
-				sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo());
-				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 16);
-				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
-				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
-				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
+		String eventType=getEventType(reqPayload);
+		String textMessage="";
+		if(eventType.equals("PostbackEvent")) {
+			textMessage=reqPayload.getEntry().get(0).getMessaging().get(0).getPostback().getPayload();
+			logger.info("getPayload>>>>{}",textMessage);
+		}else{
+			 textMessage = reqPayload.getEntry().get(0).getMessaging().get(0).getMessage().getText();
+			 logger.info("getRequestedText>>>>{}",textMessage);
+		}
+		final String senderId= reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
+		final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
+		logger.info("senderId>>>>{},RecipientId>>>{}",senderId,recipientId);
+		BotSession botSession = (BotSession) session.getAttribute(recipientId);
+		final UserDetail userDetail=getUserDetail(senderId);
+		if(botSession==null) {
+			ResponseEntity<String> imLoginResponseEntity = imLogin(userDetail);
+			if(imLoginResponseEntity.getStatusCode()!= HttpStatus.FOUND) {
+				logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
+			}else {
+				logger.info("<<<<<<<<<<Loggedin successfully>>>>>>>>>");				
+				botSession=new BotSession();
+				botSession.setFbReceipientId(recipientId);
+				botSession.setFbSenderId(senderId);
+				botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
+				botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
+				session.setAttribute(recipientId,botSession);
 			}
-		}		
+		}
+		logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>",botSession);
+		String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
+		logger.info("<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>",senderActionAcknowledge);
+		senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
+		logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>",senderActionAcknowledge);
+		sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo());
+		getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 16);
+		//sendMessageFromIM(senderId, textMessage.trim(), userDetail);
+		//sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"",userDetail));
+	    senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
+	    logger.info("senderActionAcknowledge>>>>{}",senderActionAcknowledge);
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
-	}
-	
-	
-	void fbMessageHandler() {
-		
 	}
 	
 	public String sendMessage(String payLoad) {
@@ -234,7 +231,7 @@ public class SellaFbController {
 		return newChatInfo.getChatid();
 	}
 	
-	private ResponseEntity<String> sendImMessage(final String chatId,  String fbMessage, final String cookieInfo) {
+	private ResponseEntity<String> sendImMessage(final String chatId, final String fbMessage, final String cookieInfo) {
 		final MessagePayload messagepayload = new MessagePayload();
 		messagepayload.setAction("chatevent");
 		messagepayload.setIdevent("chatmessage");
