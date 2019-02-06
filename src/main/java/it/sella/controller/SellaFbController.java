@@ -64,7 +64,7 @@ public class SellaFbController {
 				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
 				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
-				logger.info("senderId>>>>{},RecipientId>>>{}", senderId, recipientId);
+				logger.info("<<<<<<senderId>>>>{},RecipientId>>>{}", senderId, recipientId);
 				BotSession botSession = (BotSession) session.getAttribute(recipientId);
 				final UserDetail userDetail = getUserDetail(senderId);
 				if (botSession == null) {
@@ -88,9 +88,7 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>", senderActionAcknowledge);
 				sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo());
 				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 16);
-				// sendMessageFromIM(senderId, textMessage.trim(), userDetail);
-				// sendMessage(QnaResponse.getJsonResponse(senderId,
-				// textMessage!=null?textMessage.toLowerCase():"",userDetail));
+				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
 			}
