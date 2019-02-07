@@ -1,6 +1,7 @@
 
 package it.sella.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class SellaFbController {
 
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
-			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature,HttpSession session) {
+			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature,HttpServletRequest req) {
 		logger.info("<<<<<<<<<Response payload:{} && signature: {}>>>>>>>>>>", payLoad, signature);
 		RequestPayload reqPayload=getResponseObject(payLoad);
 		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>",reqPayload);
@@ -66,6 +67,7 @@ public class SellaFbController {
 				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
+				HttpSession session = req.getSession();
 				BotSession botSession = (BotSession) session.getAttribute(recipientId);
 				final UserDetail userDetail = getUserDetail(senderId);
 				if (botSession == null) {
