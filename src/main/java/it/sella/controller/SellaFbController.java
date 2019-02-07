@@ -67,7 +67,7 @@ public class SellaFbController {
 				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
-				HttpSession session = req.getSession();
+				HttpSession session = req.getSession(false);
 				BotSession botSession = (BotSession) session.getAttribute(recipientId);
 				final UserDetail userDetail = getUserDetail(senderId);
 				if (botSession == null) {
@@ -76,12 +76,13 @@ public class SellaFbController {
 						logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
 					} else {
 						logger.info("<<<<<<<<<<Loggedin successfully>>>>>>>>>");
+						session=req.getSession();
 						botSession = new BotSession();
 						botSession.setFbReceipientId(recipientId);
 						botSession.setFbSenderId(senderId);
 						botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
 						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
-						session.setAttribute(recipientId, botSession);
+						session.setAttribute(recipientId, botSession);						
 					}
 				}
 				logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
