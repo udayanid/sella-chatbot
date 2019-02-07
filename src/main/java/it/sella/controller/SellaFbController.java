@@ -1,7 +1,6 @@
 
 package it.sella.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -275,7 +274,7 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>",result);
 				final String answer = result.getAnswer();
 				final String message = result.getMessage();					
-				if(answer!=null || message!=null) {
+				if(answer!=null) {
 					responseString.append(answer!=null?answer:message);
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",recipientId,responseString);
 					sendMessage(imResponse);
