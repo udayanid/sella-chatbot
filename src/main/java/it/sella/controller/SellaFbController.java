@@ -84,6 +84,8 @@ public class SellaFbController {
 						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
 						session.setAttribute(recipientId, botSession);						
 					}
+				}else {
+					logger.info("????????????bot session present???????????");
 				}
 				logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
 				String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
