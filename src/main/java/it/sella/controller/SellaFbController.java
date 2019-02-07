@@ -55,7 +55,7 @@ public class SellaFbController {
 	}
 	
 	@Autowired 
-	HttpSession httpSession;
+	private HttpSession httpSession;
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
 			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
@@ -70,11 +70,13 @@ public class SellaFbController {
 				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
-				logger.info("<<<<<<<<<<<<test1>>>>>>>>>>>>>>");
-				BotSession botSession = (BotSession) httpSession.getAttribute(recipientId);
-				logger.info("<<<<<<<<<<<<<<<botsession available>>>>>>>>>>>>>>>>>");
 				final UserDetail userDetail = getUserDetail(senderId);
-				if (botSession == null) {
+				BotSession botSession=null;
+				if(!httpSession.isNew()) {
+					botSession = (BotSession) httpSession.getAttribute(recipientId);
+					logger.info("<<<<<<<<<<<<<<<botsession available,HttpSessionId>>>>>>>>>>>>>>>>>",httpSession.getId());
+				}else {
+					logger.info("<<<<<<<<HttpSessionId::{}>>>>>",httpSession.getId());
 					ResponseEntity<String> imLoginResponseEntity = imLogin(userDetail);
 					if (imLoginResponseEntity.getStatusCode() != HttpStatus.FOUND) {
 						logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
@@ -87,9 +89,7 @@ public class SellaFbController {
 						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
 						httpSession.setAttribute(recipientId, botSession);						
 					}
-				}else {
-					logger.info("????????????bot session present???????????");
-				}
+				}				
 				logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
 				String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
 				logger.info("<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>", senderActionAcknowledge);
