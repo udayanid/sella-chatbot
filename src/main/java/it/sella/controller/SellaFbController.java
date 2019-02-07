@@ -4,7 +4,6 @@ package it.sella.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,8 +58,6 @@ public class SellaFbController {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 	
-	@Autowired 
-	private HttpSession httpSession;
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
 			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
@@ -75,9 +72,8 @@ public class SellaFbController {
 		BotSession botSession=null;		
 		if(botSessionMap.containsKey(recipientId)) {
 			botSession = (BotSession) botSessionMap.get(recipientId);
-			logger.info("<<<<<<<<<<<<<<<botsession available,HttpSessionId>>>>>>>>>>>>>>>>>",httpSession.getId());
+			logger.info("<<<<<<<<<<<<<<<botsession available>>>>>>>>>>>>>>>>>");
 		}else {
-			logger.info("<<<<<<<<HttpSessionId::{}>>>>>",httpSession.getId());
 			ResponseEntity<String> imLoginResponseEntity = imLogin(userDetail);
 			if (imLoginResponseEntity.getStatusCode() != HttpStatus.FOUND) {
 				logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
