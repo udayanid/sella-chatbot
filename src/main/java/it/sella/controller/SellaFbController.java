@@ -193,6 +193,7 @@ public class SellaFbController {
 		for (int i = 0; i < 16; i++) {
 			logger.info("poll count{}", i + 1);
 			PollResponse pollResponse = restTemplate.postForEntity(pollUrl, pollEntity, PollResponse.class).getBody();
+			logger.info("<<<<Error:{} and status:::{}",pollResponse.getErrors(),pollResponse.getStatus());
 			logger.info("pollresponse count:::{}", pollResponse.getResults().size());
 			StringBuilder responseAnswer = new StringBuilder();
 			StringBuilder responseMessage = new StringBuilder();
@@ -275,7 +276,6 @@ public class SellaFbController {
 			try {
 				Thread.sleep(new Long(1000));
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -287,7 +287,7 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>",result);
 				final String answer = result.getAnswer();
 				final String message = result.getMessage();	
-//				String defaultMessage="Sono Stella, assistente virtuale di Banca Sella. Come ti posso aiutare?";
+				//String defaultMessage="Sono Stella, assistente virtuale di Banca Sella. Come ti posso aiutare?";
 				if(answer!=null || message!=null) {
 					responseString.append(answer!=null?answer:message);
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",recipientId,responseString);
