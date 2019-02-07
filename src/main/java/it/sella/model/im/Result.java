@@ -16,22 +16,22 @@ public class Result {
 	private String answer;
 	@SerializedName("intentName")
 	@Expose
-	private String intentName;
+	private Object intentName;
 	@SerializedName("intentCode")
 	@Expose
-	private String intentCode;
+	private Object intentCode;
 	@SerializedName("action")
 	@Expose
-	private String action;
+	private Object action;
 	@SerializedName("operatorSkill")
 	@Expose
-	private String operatorSkill;
+	private Object operatorSkill;
 	@SerializedName("link")
 	@Expose
-	private String link;
+	private Object link;
 	@SerializedName("intentArea")
 	@Expose
-	private String intentArea;
+	private Object intentArea;
 	@SerializedName("url")
 	@Expose
 	private Object url;
@@ -42,7 +42,7 @@ public class Result {
 
 	public void setSender(String sender) {
 		this.sender = sender;
-	}	
+	}
 
 	public String getMessage() {
 		return message;
@@ -60,51 +60,51 @@ public class Result {
 		this.answer = answer;
 	}
 
-	public String getIntentName() {
+	public Object getIntentName() {
 		return intentName;
 	}
 
-	public void setIntentName(String intentName) {
+	public void setIntentName(Object intentName) {
 		this.intentName = intentName;
 	}
 
-	public String getIntentCode() {
+	public Object getIntentCode() {
 		return intentCode;
 	}
 
-	public void setIntentCode(String intentCode) {
+	public void setIntentCode(Object intentCode) {
 		this.intentCode = intentCode;
 	}
 
-	public String getAction() {
+	public Object getAction() {
 		return action;
 	}
 
-	public void setAction(String action) {
+	public void setAction(Object action) {
 		this.action = action;
 	}
 
-	public String getOperatorSkill() {
+	public Object getOperatorSkill() {
 		return operatorSkill;
 	}
 
-	public void setOperatorSkill(String operatorSkill) {
+	public void setOperatorSkill(Object operatorSkill) {
 		this.operatorSkill = operatorSkill;
 	}
 
-	public String getLink() {
+	public Object getLink() {
 		return link;
 	}
 
-	public void setLink(String link) {
+	public void setLink(Object link) {
 		this.link = link;
 	}
 
-	public String getIntentArea() {
+	public Object getIntentArea() {
 		return intentArea;
 	}
 
-	public void setIntentArea(String intentArea) {
+	public void setIntentArea(Object intentArea) {
 		this.intentArea = intentArea;
 	}
 
@@ -122,5 +122,4 @@ public class Result {
 				+ ", intentCode=" + intentCode + ", action=" + action + ", operatorSkill=" + operatorSkill + ", link="
 				+ link + ", intentArea=" + intentArea + ", url=" + url + "]";
 	}
-
 }
