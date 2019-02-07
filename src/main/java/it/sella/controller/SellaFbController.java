@@ -68,7 +68,9 @@ public class SellaFbController {
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
 				HttpSession session = req.getSession(false);
+				logger.info("<<<<<<<<<<<<test1>>>>>>>>>>>>>>");
 				BotSession botSession = (BotSession) session.getAttribute(recipientId);
+				logger.info("<<<<<<<<<<<<<<<botsession available>>>>>>>>>>>>>>>>>");
 				final UserDetail userDetail = getUserDetail(senderId);
 				if (botSession == null) {
 					ResponseEntity<String> imLoginResponseEntity = imLogin(userDetail);
