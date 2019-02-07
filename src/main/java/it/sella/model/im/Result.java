@@ -16,110 +16,92 @@ public class Result {
 	private String answer;
 	@SerializedName("intentName")
 	@Expose
-	private Object intentName;
+	private String intentName;
 	@SerializedName("intentCode")
 	@Expose
-	private Object intentCode;
+	private String intentCode;
 	@SerializedName("action")
 	@Expose
-	private Object action;
+	private String action;
 	@SerializedName("operatorSkill")
 	@Expose
-	private Object operatorSkill;
+	private String operatorSkill;
 	@SerializedName("link")
 	@Expose
-	private Object link;
+	private String link;
 	@SerializedName("intentArea")
 	@Expose
-	private Object intentArea;
+	private String intentArea;
 	@SerializedName("url")
 	@Expose
 	private Object url;
-
 	public String getSender() {
 		return sender;
 	}
-
 	public void setSender(String sender) {
 		this.sender = sender;
 	}
-
 	public String getMessage() {
 		return message;
 	}
-
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 	public String getAnswer() {
 		return answer;
 	}
-
 	public void setAnswer(String answer) {
 		this.answer = answer;
 	}
-
-	public Object getIntentName() {
+	public String getIntentName() {
 		return intentName;
 	}
-
-	public void setIntentName(Object intentName) {
+	public void setIntentName(String intentName) {
 		this.intentName = intentName;
 	}
-
-	public Object getIntentCode() {
+	public String getIntentCode() {
 		return intentCode;
 	}
-
-	public void setIntentCode(Object intentCode) {
+	public void setIntentCode(String intentCode) {
 		this.intentCode = intentCode;
 	}
-
-	public Object getAction() {
+	public String getAction() {
 		return action;
 	}
-
-	public void setAction(Object action) {
+	public void setAction(String action) {
 		this.action = action;
 	}
-
-	public Object getOperatorSkill() {
+	public String getOperatorSkill() {
 		return operatorSkill;
 	}
-
-	public void setOperatorSkill(Object operatorSkill) {
+	public void setOperatorSkill(String operatorSkill) {
 		this.operatorSkill = operatorSkill;
 	}
-
-	public Object getLink() {
+	public String getLink() {
 		return link;
 	}
-
-	public void setLink(Object link) {
+	public void setLink(String link) {
 		this.link = link;
 	}
-
-	public Object getIntentArea() {
+	public String getIntentArea() {
 		return intentArea;
 	}
-
-	public void setIntentArea(Object intentArea) {
+	public void setIntentArea(String intentArea) {
 		this.intentArea = intentArea;
 	}
-
 	public Object getUrl() {
 		return url;
 	}
-
 	public void setUrl(Object url) {
 		this.url = url;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Result [sender=" + sender + ", message=" + message + ", answer=" + answer + ", intentName=" + intentName
 				+ ", intentCode=" + intentCode + ", action=" + action + ", operatorSkill=" + operatorSkill + ", link="
 				+ link + ", intentArea=" + intentArea + ", url=" + url + "]";
 	}
+
+	
 }

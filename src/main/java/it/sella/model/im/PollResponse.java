@@ -11,7 +11,7 @@ public class PollResponse {
 	private String status;
 	@SerializedName("errors")
 	@Expose
-	private List<Object> errors = null;
+	private List<Error> errors = null;
 	@SerializedName("results")
 	@Expose
 	private List<Result> results = null;
@@ -27,11 +27,11 @@ public class PollResponse {
 		this.status = status;
 	}
 
-	public List<Object> getErrors() {
+	public List<Error> getErrors() {
 		return errors;
 	}
 
-	public void setErrors(List<Object> errors) {
+	public void setErrors(List<Error> errors) {
 		this.errors = errors;
 	}
 
@@ -49,6 +49,12 @@ public class PollResponse {
 
 	public void setErrorMessageCode(Object errorMessageCode) {
 		this.errorMessageCode = errorMessageCode;
+	}
+
+	@Override
+	public String toString() {
+		return "PollResponse [status=" + status + ", errors=" + errors + ", results=" + results + ", errorMessageCode="
+				+ errorMessageCode + "]";
 	}
 
 }

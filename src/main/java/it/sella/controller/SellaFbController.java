@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import demo.ChatResponse;
 import it.sella.BotSession;
 import it.sella.JsonUtil;
 import it.sella.model.Entry;
@@ -29,9 +30,9 @@ import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
 import it.sella.model.im.Eventdatum;
-import it.sella.model.im.ImResponse;
 import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
+import it.sella.model.im.PollResponse;
 import it.sella.model.im.Result;
 
 
@@ -85,7 +86,7 @@ public class SellaFbController {
 				botSession = new BotSession();
 				botSession.setFbReceipientId(recipientId);
 				botSession.setFbSenderId(senderId);
-				botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
+				botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie")));
 				botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
 				botSessionMap.put(recipientId, botSession);
 			}
@@ -101,8 +102,18 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>", senderActionAcknowledge);
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 				logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>", senderActionAcknowledge);
-				sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo());
-				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 10, textMessage);
+				logger.info("<<<<<<<<<<<<<ChatId As of Now::::{}>>>>>>>>>>>>>>", botSession.getImChatId());
+				ChatResponse chatResponse = sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo()).getBody();
+				logger.info("<<<<<<<<<ChatResponse:::{}",chatResponse);
+				if(chatResponse.getStatus().equals("EXCEPTION")) {
+					final String chatId = getChatId(botSession.getCokkieInfo());
+	            	botSession.setImChatId(chatId);
+	            	botSessionMap.put(recipientId, botSession);
+	            	logger.info("<<<<<<Newww chatId:::{}>>>>>>>",chatId);
+	            	sessionHandling(chatId, recipientId);
+	            	sendImMessage(chatId, textMessage, botSession.getCokkieInfo());
+	            }
+				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 10);
 				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
@@ -160,11 +171,10 @@ public class SellaFbController {
 	}
 	
 	
-	private String getChatId(HttpHeaders headers) {		
-		final String cookieInfo = headers.getFirst("Set-Cookie");
+	private String getChatId(String cookieInfo) {		
 		String newChatPayload = "{\"action\":\"newchat\",\"sourceIntentCode\":\"\"}";
 		final RestTemplate restTemplate = new RestTemplate();
-		headers = new HttpHeaders();
+		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Cookie", cookieInfo);
 		final HttpEntity<String> chatEntity = new HttpEntity<>(newChatPayload, headers);
@@ -173,7 +183,7 @@ public class SellaFbController {
 		return newChatInfo.getChatid();
 	}
 	
-	private ResponseEntity<String> sendImMessage(final String chatId, final String fbMessage, final String cookieInfo) {
+	private ResponseEntity<ChatResponse> sendImMessage(final String chatId, final String fbMessage, final String cookieInfo) {
 		final MessagePayload messagepayload = new MessagePayload();
 		messagepayload.setAction("chatevent");
 		messagepayload.setIdevent("chatmessage");
@@ -188,38 +198,31 @@ public class SellaFbController {
 		headers.add("Cookie",cookieInfo);
 		final HttpEntity<MessagePayload> messageEntity = new HttpEntity<>(messagepayload, headers);
 		final RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<String> sendMessageResponseEntity = restTemplate.postForEntity(CHAT_URL, messageEntity, String.class);
+		ResponseEntity<ChatResponse> sendMessageResponseEntity = restTemplate.postForEntity(CHAT_URL, messageEntity, ChatResponse.class);
 		return sendMessageResponseEntity;
 	}
 	
-	private void getPollResponse(final String recipientId, String chatId, final String cookieInfo,int totalPolls, String fallBackTextMessage) {
+	private void getPollResponse(final String recipientId, String chatId, final String cookieInfo, int totalPolls) {
 		String pollPayload = String.format("{\"chatid\":\"%s\"}", chatId);
-		logger.info("<<<<<<<<<pollpayload::{}>>>>>>>>>>>>>>>",pollPayload);
+		logger.info("<<<<<<<<<pollpayload::{}>>>>>>>>>>>>>>>", pollPayload);
 		final RestTemplate restTemplate = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.add("Cookie",cookieInfo);
+		headers.add("Cookie", cookieInfo);
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
-		for(int i=0;i<5;i++) {				
-			logger.info("<<<<<<<<<<poll No.{}>>>>>>>>>>>",(i+1));
-			ImResponse pollResponse = restTemplate.postForEntity(POLL_URL, pollEntity, ImResponse.class).getBody();
-			logger.info("<<<<<<<<<<<<Total Poll Results :::{}>>>>>>>>>>>",pollResponse.getResults().size());
-			logger.info("<<<<<<<<<<<<PollResponse Status :::{}>>>>>>>>>>>",pollResponse.getStatus());
-            if(pollResponse.getStatus().equals("EXCEPTION")) {
-            	chatId = getChatId(headers);
-            	logger.info("<<<<<<Newww chatId:::{}>>>>>>>",chatId);
-            	sessionHandling(chatId, recipientId);
-            	sendImMessage(chatId, fallBackTextMessage, cookieInfo);
-            }
-			for(Result result:pollResponse.getResults()) {
-				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>",result);
+		for (int i = 0; i < 5; i++) {
+			PollResponse pollResponse = restTemplate.postForEntity(POLL_URL, pollEntity, PollResponse.class).getBody();
+			logger.info("<<<<<<<<<<<<<poll No.{} =>Total  Results :::{}>>>>>>>>>>>", (i + 1), pollResponse.getResults().size());
+			logger.info("<<<<<<<<<<<<PollResponse Status :::{}>>>>>>>>>>>", pollResponse.getStatus());
+			for (Result result : pollResponse.getResults()) {
+				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>", result);
 				final String answer = result.getAnswer();
-				final String message = result.getMessage();	
-				if(answer!=null || message!=null) {
-					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",recipientId,answer!=null?answer:message);
+				final String message = result.getMessage();
+				if (answer != null || message != null) {
+					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, answer != null ? answer : message);
 					sendMessage(imResponse);
-					if(result.getLink()!=null) {
-						imResponse = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",recipientId, result.getLink());
+					if (result.getLink() != null) {
+						imResponse = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",	recipientId, result.getLink());
 						sendMessage(imResponse);
 					}
 				}
@@ -228,7 +231,7 @@ public class SellaFbController {
 				Thread.sleep(new Long(1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}	
+			}
 		}
 	}	
 	
