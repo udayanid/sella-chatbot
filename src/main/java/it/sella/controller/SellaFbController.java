@@ -4,10 +4,8 @@ package it.sella.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -106,7 +104,6 @@ public class SellaFbController {
 	            	botSession.setImChatId(chatId);
 	            	botSessionMap.put(recipientId, botSession);
 	            	logger.info("<<<<<<Newww chatId:::{}>>>>>>>",chatId);
-	            	sessionHandling(chatId, recipientId);
 	            	sendImMessage(chatId, textMessage, botSession.getCokkieInfo());
 	            }
 				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 10);
@@ -231,10 +228,10 @@ public class SellaFbController {
 		}
 	}	
 	
-	private void sessionHandling(String chatId,String recipientId) {		
-		BotSession session =botSessionMap.get(recipientId);
-		session.setImChatId(chatId);
-		botSessionMap.put(recipientId,session);
-	}
+//	private void sessionHandling(String chatId,String recipientId) {		
+//		BotSession session =botSessionMap.get(recipientId);
+//		session.setImChatId(chatId);
+//		botSessionMap.put(recipientId,session);
+//	}
 	
 }
