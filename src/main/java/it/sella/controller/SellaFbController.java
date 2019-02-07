@@ -225,6 +225,7 @@ public class SellaFbController {
 		return imLoginResponseEntity;
 	}
 	
+	
 	private String getChatId(HttpHeaders headers) {		
 		final String cookieInfo = headers.getFirst("Set-Cookie");
 		String newChatPayload = "{\"action\":\"newchat\",\"sourceIntentCode\":\"\"}";
