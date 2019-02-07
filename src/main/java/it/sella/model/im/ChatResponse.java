@@ -1,4 +1,4 @@
-package demo;
+package it.sella.model.im;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import demo.ChatResponse;
 import it.sella.BotSession;
 import it.sella.JsonUtil;
 import it.sella.model.Entry;
 import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
+import it.sella.model.im.ChatResponse;
 import it.sella.model.im.Eventdatum;
 import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
