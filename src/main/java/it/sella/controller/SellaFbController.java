@@ -44,7 +44,7 @@ public class SellaFbController {
 	@GetMapping("/webhook")
 	public ResponseEntity<?> verify(@RequestParam("hub.challenge") String challenge,
 			@RequestParam("hub.verify_token") String token) {
-		logger.info("Challenge is:{} and token is {}", challenge, token);
+		logger.info("<<<<<<<<<<<<<Challenge is:{} and token is {}>>>>>>>>>>>", challenge, token);
 		if (token.equals("sellatoken123"))
 			return new ResponseEntity<String>(challenge, HttpStatus.OK);
 		else
@@ -55,9 +55,9 @@ public class SellaFbController {
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
 			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature,HttpSession session) {
-		logger.info("Response payload:{} && signature: {}", payLoad, signature);
+		logger.info("<<<<<<<<<Response payload:{} && signature: {}>>>>>>>>>>", payLoad, signature);
 		RequestPayload reqPayload=getResponseObject(payLoad);
-		logger.info("reqpayload>>>>{}",reqPayload);
+		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>",reqPayload);
 		String eventType=getEventType(reqPayload);		
 		for (Entry entry : reqPayload.getEntry()) {
 			for (Messaging messaging : entry.getMessaging()) {
@@ -88,7 +88,7 @@ public class SellaFbController {
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 				logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>", senderActionAcknowledge);
 				sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo());
-				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 10);
+				getPollResponse(botSession.getFbSenderId(), botSession.getImChatId(), botSession.getCokkieInfo(), 8);
 				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
@@ -99,7 +99,7 @@ public class SellaFbController {
 	
 	public String sendMessage(String payLoad) {
 		String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
-		logger.info("url>>>>{}",url);
+		logger.info("<<<<<<<<FB_GRAPH_API_URL_MESSAGES:::::::{}>>>>>>>>>>>",url);
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);	
