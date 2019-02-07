@@ -6,6 +6,7 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,8 @@ import it.sella.model.im.NewChatInfo;
 import it.sella.model.im.PollResponse;
 import it.sella.model.im.Result;
 
+
+
 @RestController
 public class SellaFbController {
     //https://sella.it/sellabot/chatinit?nome=nome1&cognome=cognome1&email=test@sella.it&CHANNEL=Sella_sito_free
@@ -52,10 +55,11 @@ public class SellaFbController {
 			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 	
-
+	@Autowired 
+	HttpSession httpSession;
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
-			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature,HttpServletRequest req) {
+			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
 		logger.info("<<<<<<<<<Response payload:{} && signature: {}>>>>>>>>>>", payLoad, signature);
 		RequestPayload reqPayload=getResponseObject(payLoad);
 		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>",reqPayload);
@@ -67,9 +71,8 @@ public class SellaFbController {
 				final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 				final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
-				HttpSession session = req.getSession(false);
 				logger.info("<<<<<<<<<<<<test1>>>>>>>>>>>>>>");
-				BotSession botSession = (BotSession) session.getAttribute(recipientId);
+				BotSession botSession = (BotSession) httpSession.getAttribute(recipientId);
 				logger.info("<<<<<<<<<<<<<<<botsession available>>>>>>>>>>>>>>>>>");
 				final UserDetail userDetail = getUserDetail(senderId);
 				if (botSession == null) {
@@ -78,13 +81,12 @@ public class SellaFbController {
 						logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
 					} else {
 						logger.info("<<<<<<<<<<Loggedin successfully>>>>>>>>>");
-						session=req.getSession();
 						botSession = new BotSession();
 						botSession.setFbReceipientId(recipientId);
 						botSession.setFbSenderId(senderId);
 						botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
 						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
-						session.setAttribute(recipientId, botSession);						
+						httpSession.setAttribute(recipientId, botSession);						
 					}
 				}else {
 					logger.info("????????????bot session present???????????");
