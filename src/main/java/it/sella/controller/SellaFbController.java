@@ -1,6 +1,9 @@
 
 package it.sella.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -35,6 +38,7 @@ import it.sella.model.im.Result;
 
 @RestController
 public class SellaFbController {
+	Map<String, BotSession> botSessionMap = new HashMap<String, BotSession>();
     //https://sella.it/sellabot/chatinit?nome=nome1&cognome=cognome1&email=test@sella.it&CHANNEL=Sella_sito_free
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
 	private static final String ACCESS_TOKEN = "EAADwyglYT3gBACIGJ5VroCVMAiZAtbW2zsKihP6iClcAeCDrPgusQQNuI6jPvEshBF0TgwW2CzVRIQZCf5ZC6uYe8CXMTY8cnat4OfBgJzsWZAZCRDWaw9N29ZCsy2KZCcCS5mvRmooIkbB3TclHrJIAZAah0SPJTVJ2g2ZB9fExG9w0QmPyWRyQR";
@@ -72,8 +76,8 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
 				final UserDetail userDetail = getUserDetail(senderId);
 				BotSession botSession=null;
-				if(!httpSession.isNew()) {
-					botSession = (BotSession) httpSession.getAttribute(recipientId);
+				if(botSessionMap.containsKey(recipientId)) {
+					botSession = (BotSession) botSessionMap.get(recipientId);
 					logger.info("<<<<<<<<<<<<<<<botsession available,HttpSessionId>>>>>>>>>>>>>>>>>",httpSession.getId());
 				}else {
 					logger.info("<<<<<<<<HttpSessionId::{}>>>>>",httpSession.getId());
@@ -87,8 +91,9 @@ public class SellaFbController {
 						botSession.setFbSenderId(senderId);
 						botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders()));
 						botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
-						httpSession.setAttribute(recipientId, botSession);						
+						botSessionMap.put(recipientId, botSession);
 					}
+					
 				}				
 				logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
 				String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
@@ -266,7 +271,14 @@ public class SellaFbController {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		headers.add("Cookie",cookieInfo);
 		HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
-		for(int i=0;i<totalPolls;i++) {	
+		for(int i=0;i<5;i++) {	
+			try {
+				Thread.sleep(new Long(1000));
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			logger.info("<<<<<<<<<<poll No.{}>>>>>>>>>>>",(i+1));
 			PollResponse pollResponse = restTemplate.postForEntity(POLL_URL, pollEntity, PollResponse.class).getBody();
 			logger.info("<<<<<<<<<<<<Total Poll Results :::{}>>>>>>>>>>>",pollResponse.getResults().size());
@@ -275,8 +287,8 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>",result);
 				final String answer = result.getAnswer();
 				final String message = result.getMessage();	
-				String defaultMessage="Sono Stella, assistente virtuale di Banca Sella. Come ti posso aiutare?";
-				if(answer!=null || (message!=null && !message.equals(defaultMessage))) {
+//				String defaultMessage="Sono Stella, assistente virtuale di Banca Sella. Come ti posso aiutare?";
+				if(answer!=null || message!=null) {
 					responseString.append(answer!=null?answer:message);
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",recipientId,responseString);
 					sendMessage(imResponse);
