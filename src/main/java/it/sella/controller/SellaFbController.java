@@ -274,8 +274,9 @@ public class SellaFbController {
 			for(Result result:pollResponse.getResults()) {
 				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>",result);
 				final String answer = result.getAnswer();
-				final String message = result.getMessage();					
-				if(answer!=null) {
+				final String message = result.getMessage();	
+				String defaultMessage="Sono Stella, assistente virtuale di Banca Sella. Come ti posso aiutare?";
+				if(answer!=null || (message!=null && !message.equals(defaultMessage))) {
 					responseString.append(answer!=null?answer:message);
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }",recipientId,responseString);
 					sendMessage(imResponse);
