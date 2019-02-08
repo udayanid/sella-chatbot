@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,7 @@ import it.sella.JsonUtil;
 import it.sella.model.Entry;
 import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
+import it.sella.model.SendMessageAcknowledgement;
 import it.sella.model.UserDetail;
 import it.sella.model.im.ChatResponse;
 import it.sella.model.im.Eventdatum;
@@ -122,8 +124,9 @@ public class SellaFbController {
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);	
-		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);		
-		return restTemplate.postForObject(url, entity, String.class);
+		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);	
+		ResponseEntity<SendMessageAcknowledgement> acknowledgement = restTemplate.exchange(url,HttpMethod.POST, entity, SendMessageAcknowledgement.class);
+		return acknowledgement.getBody().getMessageId();
 	}
 	
 	public UserDetail getUserDetail(String senderId) {
@@ -133,7 +136,6 @@ public class SellaFbController {
 		UserDetail userDetail = restTemplate.getForObject(url, UserDetail.class);
 		return userDetail;
 	}
-	
 	
 	
 	private String getSenderActionResonse(final String senderAction, final String senderId) {
