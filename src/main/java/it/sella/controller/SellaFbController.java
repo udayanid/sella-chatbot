@@ -217,7 +217,7 @@ public class SellaFbController {
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, answer != null ? answer : message);
 					String fbAcknowledgement = sendMessage(imResponse);
 					logger.info("<<<<Acknowledgement of fb:::{}>>>>>",fbAcknowledgement);
-					if (result.getLink() != null || !result.getLink().isEmpty()) {
+					if (result.getLink() != null && !result.getLink().isEmpty()) {
 						imResponse = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",	recipientId, result.getLink());
 						sendMessage(imResponse);
 						logger.info("<<<<Acknowledgement of fb link:::{}>>>>>",fbAcknowledgement);
