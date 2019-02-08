@@ -213,16 +213,20 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<Each Result :::{}>>>>>>>>>>>>>", result);
 				final String answer = result.getAnswer();
 				final String message = result.getMessage();
-				if (answer != null || message != null) {
-					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, answer != null ? answer : message);
+				if (answer != null && !answer.isEmpty()) {					
+					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, answer);
 					String fbAcknowledgement = sendMessage(imResponse);
-					logger.info("<<<<Acknowledgement of fb:::{}>>>>>",fbAcknowledgement);
+					logger.info("<<<<Answer Acknowledgement of fb:::{}>>>>>",fbAcknowledgement);
 					if (result.getLink() != null && !result.getLink().isEmpty()) {
 						imResponse = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",	recipientId, result.getLink());
 						sendMessage(imResponse);
 						logger.info("<<<<Acknowledgement of fb link:::{}>>>>>",fbAcknowledgement);
-
 					}
+				}else if(message!=null && !message.isEmpty()) {
+					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, message);
+					String fbAcknowledgement = sendMessage(imResponse);
+					logger.info("<<<<Message Acknowledgement of fb:::{}>>>>>",fbAcknowledgement);
+
 				}
 			}
 			try {
