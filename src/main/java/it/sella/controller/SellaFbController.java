@@ -228,11 +228,7 @@ public class SellaFbController {
 		}
 	}	
 	
-//	private void sessionHandling(String chatId,String recipientId) {		
-//		BotSession session =botSessionMap.get(recipientId);
-//		session.setImChatId(chatId);
-//		botSessionMap.put(recipientId,session);
-//	}
+
 	
 	
 }
