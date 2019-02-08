@@ -101,8 +101,6 @@ public class Result {
 		return "Result [sender=" + sender + ", message=" + message + ", answer=" + answer + ", intentName=" + intentName
 				+ ", intentCode=" + intentCode + ", action=" + action + ", operatorSkill=" + operatorSkill + ", link="
 				+ link + ", intentArea=" + intentArea + ", url=" + url + "]";
-	}
-
-	
+	}	
 	
 }
