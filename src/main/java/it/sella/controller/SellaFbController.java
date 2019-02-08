@@ -124,9 +124,8 @@ public class SellaFbController {
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);	
-		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);	
-		ResponseEntity<SendMessageAcknowledgement> acknowledgement = restTemplate.exchange(url,HttpMethod.POST, entity, SendMessageAcknowledgement.class);
-		return acknowledgement.getBody().getMessageId();
+		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);		
+		return restTemplate.postForObject(url, entity, String.class);
 	}
 	
 	public UserDetail getUserDetail(String senderId) {
@@ -216,10 +215,13 @@ public class SellaFbController {
 				final String message = result.getMessage();
 				if (answer != null || message != null) {
 					String imResponse = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", recipientId, answer != null ? answer : message);
-					sendMessage(imResponse);
+					String fbAcknowledgement = sendMessage(imResponse);
+					logger.info("<<<<Acknowledgement of fb:::{}>>>>>",fbAcknowledgement);
 					if (result.getLink() != null) {
 						imResponse = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }",	recipientId, result.getLink());
 						sendMessage(imResponse);
+						logger.info("<<<<Acknowledgement of fb link:::{}>>>>>",fbAcknowledgement);
+
 					}
 				}
 			}
