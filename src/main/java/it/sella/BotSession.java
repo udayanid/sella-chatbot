@@ -44,6 +44,7 @@ public class BotSession {
 		return "BotSession [fbSenderId=" + fbSenderId + ", fbReceipientId=" + fbReceipientId + ", imChatId=" + imChatId
 				+ ", cokkieInfo=" + cokkieInfo + "]";
 	}
+	
 
 	
 }

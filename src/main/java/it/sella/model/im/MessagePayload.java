@@ -76,5 +76,6 @@ public class MessagePayload {
 		return "MessagePayload [action=" + action + ", chatid=" + chatid + ", idevent=" + idevent
 				+ ", sourceIntentCode=" + sourceIntentCode + ", eventdata=" + eventdata + "]";
 	}
+	
 
 }

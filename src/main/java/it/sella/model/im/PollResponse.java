@@ -56,5 +56,6 @@ public class PollResponse {
 		return "PollResponse [status=" + status + ", errors=" + errors + ", results=" + results + ", errorMessageCode="
 				+ errorMessageCode + "]";
 	}
+	
 
 }

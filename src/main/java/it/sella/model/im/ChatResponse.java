@@ -184,5 +184,6 @@ public class ChatResponse {
 				+ ", licenses=" + licenses + ", transcript=" + transcript + ", overTime=" + overTime
 				+ ", errorMessageCode=" + errorMessageCode + "]";
 	}
+	
 
 }

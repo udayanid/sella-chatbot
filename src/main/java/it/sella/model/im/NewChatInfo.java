@@ -172,5 +172,6 @@ public class NewChatInfo {
 	public void setErrorMessageCode(Object errorMessageCode) {
 		this.errorMessageCode = errorMessageCode;
 	}
+	
 
 }
