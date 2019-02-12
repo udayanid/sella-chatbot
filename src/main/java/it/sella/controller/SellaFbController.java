@@ -99,8 +99,15 @@ public class SellaFbController {
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_on", senderId));
 				logger.info("<<<<<<<<<<<<<senderActionAcknowledge::::{}>>>>>>>>>>>>>>", senderActionAcknowledge);
 				logger.info("<<<<<<<<<<<<<ChatId As of Now::::{}>>>>>>>>>>>>>>", botSession.getImChatId());
+				try {
+					getPollResponse(senderId, botSession.getImChatId(),botSession.getCokkieInfo().concat("hello"),1);
+
+				}catch(Exception e) {
+					logger.info("this is the error we got::{}",e.getMessage(),e);
+				}
 				ChatResponse chatResponse = sendImMessage(botSession.getImChatId(), textMessage, botSession.getCokkieInfo()).getBody();
 				logger.info("<<<<<<<<<ChatResponse:::{}",chatResponse);
+				
 				if(chatResponse.getStatus().equals("EXCEPTION")) {
 					final String chatId = getChatId(botSession.getCokkieInfo());
 	            	botSession.setImChatId(chatId);
