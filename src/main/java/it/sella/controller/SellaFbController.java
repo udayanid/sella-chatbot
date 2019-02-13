@@ -125,9 +125,9 @@ public class SellaFbController {
 	}
 	
 	public String sendMessage(String payLoad) {
-		logger.info("<<<<<<<current log:::{}>>>>>",payLoad);
+		//logger.info("<<<<<<<current log:::{}>>>>>",payLoad);
 		String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
-		logger.info("<<<<<<<<FB_GRAPH_API_URL_MESSAGES:::::::{}>>>>>>>>>>>",url);
+		//logger.info("<<<<<<<<FB_GRAPH_API_URL_MESSAGES:::::::{}>>>>>>>>>>>",url);
 		RestTemplate restTemplate=new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);	
