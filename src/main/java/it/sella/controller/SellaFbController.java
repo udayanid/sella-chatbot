@@ -115,7 +115,7 @@ public class SellaFbController {
 	            	logger.info("<<<<<<Newww chatId:::{}>>>>>>>",chatId);
 	            	sendImMessage(chatId, textMessage, botSession.getCokkieInfo());
 	            }
-				getPollResponse(senderId, botSession.getImChatId(), botSession.getCokkieInfo(), 10);
+				getPollResponse(senderId, botSession.getImChatId(), botSession.getCokkieInfo(), 20);
 				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
@@ -237,14 +237,11 @@ public class SellaFbController {
 				}
 			}
 			try {
-				Thread.sleep(new Long(1000));
+				Thread.sleep(new Long(500));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-	}	
-	
-
-	
+	}		
 	
 }
