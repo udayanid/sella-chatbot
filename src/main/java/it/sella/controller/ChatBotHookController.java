@@ -10,7 +10,7 @@ public class ChatBotHookController {
 
 	@GetMapping("/")
 	public ResponseEntity<?> sayConnected() {
-		return new ResponseEntity<String>("Default controller is Listening", HttpStatus.OK);
+		return new ResponseEntity<String>("Default controller is Listening...", HttpStatus.OK);
 	}
 }
 //https://messengerdevelopers.com/resources/messaging
