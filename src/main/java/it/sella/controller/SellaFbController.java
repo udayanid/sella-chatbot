@@ -89,7 +89,7 @@ public class SellaFbController {
 	            	logger.info("<<<<<<New chatId:::{}>>>>>>>",chatId);
 	            	sendImMessage(chatId, textMessage, botSession.getCokkieInfo());
 	            }
-				getPollResponse(senderId, botSession.getImChatId(), botSession.getCokkieInfo(), 20);
+				getPollResponse(senderId, botSession.getImChatId(), botSession.getCokkieInfo(), 8);
 				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
