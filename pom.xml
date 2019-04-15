@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 
 	<name>SellaChatBot</name>
-	<description>Chat Bot Web hook hello world</description>
+	<description>Sella Bot Application poc</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
