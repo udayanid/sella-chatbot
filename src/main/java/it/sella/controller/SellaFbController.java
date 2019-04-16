@@ -43,8 +43,8 @@ public class SellaFbController {
 	private static final String ACCESS_TOKEN = "EAAUD51fNmIEBAGNJi2gFBTOlNdZCZBoREqto8BqQHlzqdSCJAkDUQF6uaV1XCZBSSLJj5Km2smraSFZCUKx1bhAZAsjIxfnqYGhCX7J39IOJMgmEFHZCGgvA094DdzoCZCgkU6LiivUwZAZB3xZCROBsLxDBXg2OVINYOJaewtGzrbx9e36KCkKbbr";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
 	private static final String IM_LOGIN_URL = "https://sella.it/sellabot/chatinit?nome=%s&cognome=%s&email=%s&CHANNEL=Sella_sito_free";
-	private static final String CHAT_URL="https://sella.it/sellabot/execute/user/chat";
-    private static final String POLL_URL="https://sella.it/sellabot/execute/user/poll";
+	private static final String CHAT_URL = "https://sella.it/sellabot/execute/user/chat";
+	private static final String POLL_URL = "https://sella.it/sellabot/execute/user/poll";
 
 	@GetMapping("/webhook")
 	public ResponseEntity<?> verify(@RequestParam("hub.challenge") String challenge,
@@ -59,7 +59,7 @@ public class SellaFbController {
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> getMessage(@RequestBody final String payLoad, @RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
 		logger.info("<<<<<<<<<Response payload:{} && signature: {}>>>>>>>>>>", payLoad,signature);
-		RequestPayload reqPayload=getResponseObject(payLoad);
+		RequestPayload reqPayload=getResponseObject("{ \"object\":\"page\", \"entry\":[ { \"id\":\"437062153490261\", \"time\":1539616619429, \"messaging\":[ { \"sender\":{ \"id\":\"1841499292614128\" }, \"recipient\":{ \"id\":\"437062153490261\" }, \"timestamp\":1539616618858, \"message\":{ \"mid\":\"F0LZKLRf0MQRHGQ6dYWTT4e0xl-rcOSVgGN5z_iUHtiBdMDf3S8XzLzrnz-rruC5Op_r4Bg2sBUpZb0_yGPGIw\", \"seq\":127, \"text\":\"hi\" } } ] } ] }");
 		logger.info("--------------------------------------------------------------------------------------------------------------");
 		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>",reqPayload);
 		logger.info("--------------------------------------------------------------------------------------------------------------");
@@ -67,10 +67,11 @@ public class SellaFbController {
 		final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 		logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
 		final UserDetail userDetail = getUserDetail(senderId);
-		String eventType=getEventType(reqPayload);		
+		String eventType=getEventType(reqPayload);
+		logger.info("<<<<<<<<<<<Event Type :::{}>>>>>>>>>>",eventType);
 		BotSession botSession=getSession(recipientId, senderId, userDetail);
 		logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
-		//Iterating each facebook messages
+		//Iterating each facebook messages and sending it to the bot server
 		for (Entry entry : reqPayload.getEntry()) {
 			for (Messaging messaging : entry.getMessaging()) {
 				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
@@ -139,7 +140,7 @@ public class SellaFbController {
 	
 	
 	private ResponseEntity<String> sellaBotLogin(final UserDetail userDetail){
-		String mailId=userDetail.getFirstName()+"_"+userDetail.getLastName()+"@sell.it";
+		String mailId=userDetail.getFirstName()+"_"+userDetail.getLastName()+"@test.it";
 		String url = String.format(IM_LOGIN_URL, userDetail.getFirstName(), userDetail.getLastName(),mailId);
 		logger.info("<<<<<<<SellaBot Loging URL:::{}>>>>>>>>>>>>>", url);		
 		RestTemplate restTemplate = new RestTemplate();
@@ -259,23 +260,25 @@ public class SellaFbController {
 	}	
 	
 	//getting userSession
-	private BotSession getSession(final String sessionId, final String senderId, final UserDetail userDetail) {
+	private BotSession getSession(final String recipientId, final String senderId, final UserDetail userDetail) {
+
 		BotSession botSession = null;
-		if (botSessionMap.containsKey(sessionId)) {
-			botSession = (BotSession) botSessionMap.get(sessionId);
+		if (botSessionMap.containsKey(recipientId)) {
+			botSession = (BotSession) botSessionMap.get(recipientId);
 			logger.info("<<<<<<<<<<<<<<<botsession already exists>>>>>>>>>>>>>>>>>");
 		} else {
+			//getting new sign in info
 			ResponseEntity<String> imLoginResponseEntity = sellaBotLogin(userDetail);
 			if (imLoginResponseEntity.getStatusCode() != HttpStatus.FOUND) {
 				logger.info("<<<<<<<<<<Login failed>>>>>>>>>");
 			} else {
 				logger.info("<<<<<<<<<<Loggedin successfully>>>>>>>>>");
 				botSession = new BotSession();
-				botSession.setFbReceipientId(sessionId);
+				botSession.setFbReceipientId(recipientId);
 				botSession.setFbSenderId(senderId);
 				botSession.setImChatId(getChatId(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie")));
 				botSession.setCokkieInfo(imLoginResponseEntity.getHeaders().getFirst("Set-Cookie"));
-				botSessionMap.put(sessionId, botSession);
+				botSessionMap.put(recipientId, botSession);
 			}
 
 		}
