@@ -49,7 +49,7 @@ public class SellaFbController {
 	@GetMapping("/webhook")
 	public ResponseEntity<?> verify(@RequestParam("hub.challenge") String challenge,
 			@RequestParam("hub.verify_token") String token) {
-		logger.info("<<<<<<<<<<<<<Challenge is:{} and token is {}>>>>>>>>>>>>>", challenge, token);
+		logger.info("<<<<<<<<<<<<<Hub Challenge is:{} and token is {}>>>>>>>>>>>>>", challenge, token);
 		if (token.equals("sellatoken123"))
 			return new ResponseEntity<String>(challenge, HttpStatus.OK);
 		else
