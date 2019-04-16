@@ -75,6 +75,7 @@ public class SellaFbController {
 		//Iterating each facebook messages and sending it to the bot server
 		int total_msg=0;
 		for (Entry entry : reqPayload.getEntry()) {
+			total_msg++;
 			logger.info("<<<<<<<<<<<<Total message request ::{}>>>>>>>>>>>>>>", total_msg);
 			for (Messaging messaging : entry.getMessaging()) {
 				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
