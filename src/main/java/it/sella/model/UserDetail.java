@@ -14,12 +14,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({ "first_name", "last_name", "profile_pic", "id" })
 public class UserDetail {
 
-	@Override
-	public String toString() {
-		return "UserDetail [firstName=" + firstName + ", lastName=" + lastName + ", profilePic=" + profilePic + ", id="
-				+ id + ", additionalProperties=" + additionalProperties + "]";
-	}
-
 	@JsonProperty("first_name")
 	private String firstName;
 	@JsonProperty("last_name")
@@ -30,7 +24,7 @@ public class UserDetail {
 	private String id;
 	@JsonIgnore
 	private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-
+     
 	@JsonProperty("first_name")
 	public String getFirstName() {
 		return firstName;
@@ -79,6 +73,12 @@ public class UserDetail {
 	@JsonAnySetter
 	public void setAdditionalProperty(String name, Object value) {
 		this.additionalProperties.put(name, value);
+	}
+	
+	@Override
+	public String toString() {
+		return "UserDetail [firstName=" + firstName + ", lastName=" + lastName + ", profilePic=" + profilePic + ", id="
+				+ id + ", additionalProperties=" + additionalProperties + "]";
 	}
 
 }
