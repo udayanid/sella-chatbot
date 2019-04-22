@@ -1,18 +1,30 @@
 package it.sella;
 
+import java.time.LocalDateTime;
+
 public class BotSession {
 
 	private String fbSenderId;
 	private String fbReceipientId;
 	private String imChatId;
-	private String cokkieInfo;
+	private String cookieInfo;
+	private LocalDateTime lastRequestDate;
+	
 
-	public String getCokkieInfo() {
-		return cokkieInfo;
+	public LocalDateTime getLastRequestDate() {
+		return lastRequestDate;
 	}
 
-	public void setCokkieInfo(String cokkieInfo) {
-		this.cokkieInfo = cokkieInfo;
+	public void setLastRequestDate(LocalDateTime lastRequestDate) {
+		this.lastRequestDate = lastRequestDate;
+	}	
+
+	public String getCookieInfo() {
+		return cookieInfo;
+	}
+
+	public void setCookieInfo(String cookieInfo) {
+		this.cookieInfo = cookieInfo;
 	}
 
 	public String getFbSenderId() {
@@ -42,8 +54,9 @@ public class BotSession {
 	@Override
 	public String toString() {
 		return "BotSession [fbSenderId=" + fbSenderId + ", fbReceipientId=" + fbReceipientId + ", imChatId=" + imChatId
-				+ ", cokkieInfo=" + cokkieInfo + "]";
+				+ ", cookieInfo=" + cookieInfo + ", lastRequestDate=" + lastRequestDate + "]";
 	}
+
 	
 
 	
