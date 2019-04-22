@@ -1,6 +1,7 @@
 
 package it.sella.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -259,6 +260,7 @@ public class SellaFbController {
 				botSession = getNewSession(userDetail, senderId, recipientId);
 			}else if(botSession.getLastRequestDate().isAfter(botSession.getLastRequestDate().plusMinutes(2))) {
 				botSession.setImChatId(getChatId(botSession.getCookieInfo()));
+				botSession.setLastRequestDate(LocalDateTime.now());
 			}
 			logger.info("<<<<<<<<<<<<<<<botsession exists>>>>>>>>>>>>>>>>>");
 		} else {
@@ -282,6 +284,7 @@ public class SellaFbController {
 			final String cookieString = headers.getFirst("Set-Cookie");
 			session.setImChatId(getChatId(cookieString));
 			session.setCookieInfo(cookieString);
+			session.setLastRequestDate(LocalDateTime.now());
 			botSessionMap.put(receipientId, session);
 		}
 		return session;
