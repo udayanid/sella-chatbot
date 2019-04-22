@@ -98,11 +98,13 @@ public class SellaFbController {
 				if (chatResponse.getStatus().equals("EXCEPTION")) {
 					final String chatId = getChatId(botSession.getCookieInfo());
 					botSession.setImChatId(chatId);
+					botSession.setLastRequestDate(LocalDateTime.now());
 					botSessionMap.put(recipientId, botSession);
 					logger.info("<<<<<<New chatId:::{}>>>>>>>", chatId);
 					sendImMessage(chatId, textMessage, botSession.getCookieInfo());
 				}
-				getPollResponse(senderId, botSession.getImChatId(), botSession.getCookieInfo(), 8);
+				getPollResponse(senderId, botSession.getImChatId(), botSession.getCookieInfo(), 10);
+				botSession.setLastRequestDate(LocalDateTime.now());
 				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
@@ -244,7 +246,7 @@ public class SellaFbController {
 				}
 			}
 			try {
-				Thread.sleep(new Long(500));
+				Thread.sleep(new Long(1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
