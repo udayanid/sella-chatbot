@@ -203,6 +203,7 @@ public class SellaFbController {
 		final RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<ChatResponse> sendMessageResponseEntity = restTemplate.postForEntity(CHAT_URL, messageEntity,
 				ChatResponse.class);
+		logger.info("SendImmessage>>>>>>>>>>{}",sendMessageResponseEntity.getStatusCode());
 		return sendMessageResponseEntity;
 	}
 
