@@ -8,8 +8,7 @@ public class BotSession {
 	private String fbReceipientId;
 	private String imChatId;
 	private String cookieInfo;
-	private LocalDateTime lastRequestDate;
-	
+	private LocalDateTime lastRequestDate;	
 
 	public LocalDateTime getLastRequestDate() {
 		return lastRequestDate;
@@ -56,8 +55,5 @@ public class BotSession {
 		return "BotSession [fbSenderId=" + fbSenderId + ", fbReceipientId=" + fbReceipientId + ", imChatId=" + imChatId
 				+ ", cookieInfo=" + cookieInfo + ", lastRequestDate=" + lastRequestDate + "]";
 	}
-
-	
-
 	
 }
