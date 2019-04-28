@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import it.sella.BotSession;
 import it.sella.JsonUtil;
+import it.sella.QnaResponse;
 import it.sella.model.Entry;
 import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
@@ -56,43 +57,43 @@ public class SellaFbController {
 	}
 
 	@PostMapping(path = "/webhook", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,
-			@RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
-		logger.info("<<<<<<<<<Response payload:{} && signature: {}>>>>>>>>>>", payLoad, signature);
-		// RequestPayload reqPayload=getResponseObject("{ \"object\":\"page\",
-		// \"entry\":[ { \"id\":\"437062153490261\", \"time\":1539616619429,
-		// \"messaging\":[ { \"sender\":{ \"id\":\"1841499292614128\" }, \"recipient\":{
-		// \"id\":\"437062153490261\" }, \"timestamp\":1539616618858, \"message\":{
-		// \"mid\":\"F0LZKLRf0MQRHGQ6dYWTT4e0xl-rcOSVgGN5z_iUHtiBdMDf3S8XzLzrnz-rruC5Op_r4Bg2sBUpZb0_yGPGIw\",
-		// \"seq\":127, \"text\":\"hi\" } } ] } ] }");
-		RequestPayload reqPayload = getResponseObject(payLoad);
-		logger.info(
-				"--------------------------------------------------------------------------------------------------------------");
-		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>", reqPayload);
-		logger.info(
-				"--------------------------------------------------------------------------------------------------------------");
-		final String senderId = reqPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
-		final String recipientId = reqPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
-		logger.info("<<<<<<<<<<senderId>>>>{},RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
+	public ResponseEntity<?> getMessage(@RequestBody final String payLoad,	@RequestHeader(SIGNATURE_HEADER_NAME) final String signature) {
+		logger.info("<<<<<<<<<FB Request payload:{} && FB signature: {}>>>>>>>>>>", payLoad, signature);
+		
+		final RequestPayload requestPayload = getRequestObject(payLoad, RequestPayload.class);
+		logger.info("--------------------------------------------------------------------------------------------------------------");
+		logger.info("<<<<<<<<<<<<<<<<reqpayload>>>>{}>>>>>>>>>>>>>", requestPayload);
+		logger.info("--------------------------------------------------------------------------------------------------------------");
+		
+		final String senderId = getSenderId(requestPayload);
+		final String recipientId = getReceipientId(requestPayload);
+		logger.info("<<<<<<<<<<senderId>>>>{}-------RecipientId>>>{}>>>>>>>>>>>>>>>", senderId, recipientId);
+		
 		final UserDetail userDetail = getUserDetail(senderId);
-		String eventType = getEventType(reqPayload);
-		logger.info("<<<<<<<<<<<Event Type :::{}>>>>>>>>>>", eventType);
-		BotSession botSession = getUserSession(recipientId, senderId, userDetail);
+		logger.info("<<<<<<<<<<<<<<<<<<<UserDetil:{}>>>>>>>>>>>>>",userDetail);
+		
+		
+		String eventType = getEventType(requestPayload);
+		logger.info("<<<<<<<<<The requested event Type {}>>>>>>>>>>>>>", eventType);
+		
+/*		BotSession botSession = getUserSession(recipientId, senderId, userDetail);
 		logger.info("<<<<<<<<<<<<BotSession ::{}>>>>>>>>>>>>>", botSession);
-		// Iterating each facebook messages and sending it to the bot server
+*/		
+		
+		// Iterating each facebook message entry  and sending it to the bot server
 		int total_msg = 0;
-		for (Entry entry : reqPayload.getEntry()) {
+		for (Entry entry : requestPayload.getEntry()) {
+			
 			total_msg++;
-			logger.info("<<<<<<<<<<<<Total message request ::{}>>>>>>>>>>>>>>", total_msg);
+			logger.info("<<<<<<<<<<<<Total facebook message entry ::{}>>>>>>>>>>>>>>", total_msg);
+			
 			for (Messaging messaging : entry.getMessaging()) {
-				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()
-						: messaging.getMessage().getText();
+				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
 				logger.info("<<<<<<<<<<<<TextMessage::{},EventyType:::{}>>>>>>>>>>>>>>", textMessage, eventType);
 				String senderActionAcknowledge = sendMessage(getSenderActionResonse("mark_seen", senderId));
 
-				// Requesting to BOT for new chat message
-				ChatResponse chatResponse = sendImMessage(botSession.getImChatId(), textMessage,
-						botSession.getCookieInfo()).getBody();
+				/* Requesting to BOT for new chat message
+				ChatResponse chatResponse = sendImMessage(botSession.getImChatId(), textMessage,botSession.getCookieInfo()).getBody();
 				logger.info("<<<<<<<<<ChatResponse:::{}", chatResponse);
 
 				if (chatResponse.getStatus().equals("EXCEPTION")) {
@@ -104,48 +105,72 @@ public class SellaFbController {
 					sendImMessage(chatId, textMessage, botSession.getCookieInfo());
 				}
 				getPollResponse(senderId, botSession.getImChatId(), botSession.getCookieInfo(), 10);
-				botSession.setLastRequestDate(LocalDateTime.now());
-				// sendMessage(QnaResponse.getJsonResponse(senderId,textMessage!=null?textMessage.toLowerCase():"",userDetail));
+				botSession.setLastRequestDate(LocalDateTime.now());*/
+				sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"", userDetail));
 				senderActionAcknowledge = sendMessage(getSenderActionResonse("typing_off", senderId));
-				logger.info("senderActionAcknowledge>>>>{}", senderActionAcknowledge);
+				logger.info("senderActionAcknowledge>>>>{}>>>>>>>>>>>", senderActionAcknowledge);
 			}
 		}
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
 	}
 
-	public String sendMessage(String payLoad) {
+	
+	
+	/**Method to send fb message to messenger 
+	 * @param fbResponsePayload :String
+	 * @return
+	 */
+	public String sendMessage(String fbResponsePayload) {
+		logger.info("<<<<<<<<<<<<<<<<<<<ResponsePayload::{}>>>>>>>>>>>>",fbResponsePayload);
 		final String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
-		RestTemplate restTemplate = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
+		final RestTemplate restTemplate = new RestTemplate();
+		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-		HttpEntity<String> entity = new HttpEntity<String>(payLoad, headers);
+		final HttpEntity<String> entity = new HttpEntity<String>(fbResponsePayload, headers);
 		return restTemplate.postForObject(url, entity, String.class);
 	}
 
+	
+	/**method to get user detail : UserDetail
+	 * @param senderId:String
+	 * @return 
+	 */
 	public UserDetail getUserDetail(String senderId) {
-		String formattedUrl = "https://graph.facebook.com/%saccess_token=%s";
-		String url = String.format(formattedUrl, senderId + "?fields=first_name,last_name,profile_pic&", ACCESS_TOKEN);
-		RestTemplate restTemplate = new RestTemplate();
-		UserDetail userDetail = restTemplate.getForObject(url, UserDetail.class);
+		final String formattedUrl = "https://graph.facebook.com/%saccess_token=%s";
+		final String url = String.format(formattedUrl, senderId + "?fields=first_name,last_name,profile_pic&", ACCESS_TOKEN);
+		final RestTemplate restTemplate = new RestTemplate();
+		final UserDetail userDetail = restTemplate.getForObject(url, UserDetail.class);
 		return userDetail;
 	}
 
-	private String getSenderActionResonse(final String senderAction, final String senderId) {
+	private String getSenderActionResonse(final String senderAction, final String senderId) {		
 		return String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"sender_action\":\"%s\" }", senderId, senderAction);
 	}
 
-	// to get the json to gson object
+	
+	/**Method to get ResponseObject as  RequestPayload
+	 * @param responsePayload : String
+	 * @return requestPayload: RequestPayload
+	 
 	public static RequestPayload getResponseObject(final String responsePayload) {
+		logger.info("<<<<<<<<<<<<<getResponseObject for getting ");
 		return JsonUtil.getInstance().fromJson(responsePayload, RequestPayload.class);
+	}*/
+	
+	public static <T> T getRequestObject(final String responsePayload,Class<T> clazz) {		
+		return JsonUtil.getInstance().fromJson(responsePayload, clazz);
 	}
 
-	// to get the requested eventype
+	
+	/**Method to get event type as String
+	 * @param requestPayload : String
+	 * @return eventType : String
+	 */
 	private String getEventType(RequestPayload requestPayload) {
 		String eventType = "TextEvent";
 		if (requestPayload.getEntry().get(0).getMessaging().get(0).getPostback() != null) {
 			eventType = "PostbackEvent";
-		}
-		logger.info("The requested event Tyepe {}", eventType);
+		}		
 		return eventType;
 	}
 
@@ -291,5 +316,38 @@ public class SellaFbController {
 			botSessionMap.put(receipientId, session);
 		}
 		return session;
+	}
+	
+	
+	/*
+	 * Facebook RequestPayload:-
+	 * {
+	"object": "page",
+	"entry": [{
+		"id": "437062153490261",
+		"time": 1539616619429,
+		"messaging": [{
+			"sender": {
+				"id": "1841499292614128"
+			},
+			"recipient": {
+				"id": "437062153490261"
+			},
+			"timestamp": 1539616618858,
+			"message": {
+				"mid": "F0LZKLRf0MQRHGQ6dYWTT4e0xl-rcOSVgGN5z_iUHtiBdMDf3S8XzLzrnz-rruC5Op_r4Bg2sBUpZb0_yGPGIw",
+				"seq": 127,
+				"text": "hi"
+			}
+		}]
+	}]
+}*/
+	
+	private String getSenderId(final RequestPayload requestPayload) {
+		return requestPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
+	}
+	
+	private String getReceipientId(final RequestPayload requestPayload) {
+		return requestPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 	}
 }
