@@ -16,7 +16,7 @@ public class QnaResponse {
 		case "hi":
 			jsonResponse = String.format(
 					"{ \"recipient\": { \"id\": \"recipientId\" }, \"message\": { \"text\": \"%s\" } }",
-					"Ciao " + userDetail.getFirstName() + " " + userDetail.getLastName()+",How can I help you?"+"Abbiamo a disposizione carte di credito, carte di debito e prepagate. Dalla sezione carte seleziona la voce \"Cercalacartachefaperte\" e ti aiuteremo a cercare quella più adatta alle tue esigenze. Clicca qui per accedere alla pagina.");
+					"Ciao " + userDetail.getFirstName() + " " + userDetail.getLastName()+",How can I help you?"+"Abbiamo a disposizione carte di credito, carte di debito e prepagate. Dalla sezione carte seleziona la voce Cercalacartachefaperte e ti aiuteremo a cercare quella più adatta alle tue esigenze. Clicca qui per accedere alla pagina.");
 			break;		
 		case "view product":
 			jsonResponse = "{ \"recipient\":{ \"id\":\"recipientId\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"button\", \"text\":\"Our Products!!!\", \"buttons\":[ { \"type\":\"postback\", \"title\":\"CONTI\", \"payload\":\"list conti\" }, { \"type\":\"postback\", \"title\":\"CARTE\", \"payload\":\"list carte\" }, { \"type\":\"postback\", \"title\":\"View More\", \"payload\":\"view1\" } ] } } } }";
