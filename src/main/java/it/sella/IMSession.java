@@ -2,7 +2,7 @@ package it.sella;
 
 import java.time.LocalDateTime;
 
-public class BotSession {
+public class IMSession {
 
 	private String fbSenderId;
 	private String fbReceipientId;
@@ -52,7 +52,7 @@ public class BotSession {
 
 	@Override
 	public String toString() {
-		return "BotSession [fbSenderId=" + fbSenderId + ", fbReceipientId=" + fbReceipientId + ", imChatId=" + imChatId
+		return "IMSession [fbSenderId=" + fbSenderId + ", fbReceipientId=" + fbReceipientId + ", imChatId=" + imChatId
 				+ ", cookieInfo=" + cookieInfo + ", lastRequestDate=" + lastRequestDate + "]";
 	}
 	

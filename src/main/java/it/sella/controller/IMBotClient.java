@@ -1,0 +1,83 @@
+package it.sella.controller;
+
+import java.time.LocalDateTime;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import it.sella.IMSession;
+import it.sella.model.UserDetail;
+import it.sella.model.im.NewChatInfo;
+
+public class IMBotClient
+{	
+	private static final Logger logger = LoggerFactory.getLogger(IMBotClient.class);
+	private static final String IM_LOGIN_URL = "https://sella.it/sellabot/chatinit?nome=%s&cognome=%s&email=%s&CHANNEL=Sella_sito_free";
+	private static final String CHAT_URL = "https://sella.it/sellabot/execute/user/chat";
+	private static final String POLL_URL = "https://sella.it/sellabot/execute/user/poll";
+
+	/**method to do im login
+	 * @param userDetail
+	 * @return
+	 */
+	private static ResponseEntity<String> doIMLogin(final UserDetail userDetail) {
+		final String mailId = userDetail.getFirstName().concat("_").concat(userDetail.getLastName()).concat("@test.it");
+		final String url = String.format(IM_LOGIN_URL, userDetail.getFirstName(), userDetail.getLastName(), mailId);
+		logger.info("<<<<<<<doIMLogin::: {} >>>>>>>>>>>>>", url);
+		final RestTemplate restTemplate = new RestTemplate();
+		final ResponseEntity<String> imLoginResponseEntity = restTemplate.getForEntity(url, String.class);
+		return imLoginResponseEntity;
+	}
+	
+	
+	
+	/**Method to get New IM chat id as String
+	 * @param cookieInfo
+	 * @return 
+	 */
+	public static String getNewChatId(String cookieInfo) {
+		final String newChatRequetPayload = "{\"action\":\"newchat\",\"sourceIntentCode\":\"\"}";
+		final RestTemplate restTemplate = new RestTemplate();
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Cookie", cookieInfo);
+		final HttpEntity<String> chatEntity = new HttpEntity<>(newChatRequetPayload, headers);
+		final NewChatInfo newChatInfo = restTemplate.postForEntity(CHAT_URL, chatEntity, NewChatInfo.class).getBody();
+		logger.info("<<<<<<<<getNewChatId:::{}>>>>>>>", newChatInfo.getChatid());
+		return newChatInfo.getChatid();
+	}
+	
+	
+	/**Method to get new IM chat session
+	 * @param userDetail
+	 * @param senderId
+	 * @param recepientId
+	 * @return
+	 */
+	public static IMSession getNewBotSession(final UserDetail userDetail, final String senderId, final String recepientId) {
+		final ResponseEntity<String> imLoginResponseEntity = doIMLogin(userDetail);
+		IMSession imSession = null;
+		logger.info("<<<<<<<<<<<<<<<<<<Login status code:::{}>>>>>>>>>>>", imLoginResponseEntity.getStatusCode());
+		if (imLoginResponseEntity.getStatusCode() != HttpStatus.FOUND) {
+			logger.info("<<<<<<<<<<Login KO>>>>>>>>>");
+		} else {
+			logger.info("<<<<<<<<<<Login OK>>>>>>>>>");
+			imSession = new IMSession();
+			imSession.setFbReceipientId(recepientId);
+			imSession.setFbSenderId(senderId);
+			final HttpHeaders headers = imLoginResponseEntity.getHeaders();
+			final String cookieString = headers.getFirst("Set-Cookie");
+			imSession.setImChatId(getNewChatId(cookieString));
+			imSession.setCookieInfo(cookieString);
+			imSession.setLastRequestDate(LocalDateTime.now());
+		}
+		return imSession;
+	}
+	
+}

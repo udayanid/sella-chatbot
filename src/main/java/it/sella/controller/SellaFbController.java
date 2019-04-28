@@ -1,6 +1,8 @@
 
 package it.sella.controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,25 +21,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import it.sella.BotSession;
+import it.sella.IMSession;
 import it.sella.JsonUtil;
 import it.sella.QnaResponse;
 import it.sella.model.Entry;
 import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
-import it.sella.model.im.NewChatInfo;
 
 @RestController
 public class SellaFbController {
 	private static final Logger logger = LoggerFactory.getLogger(SellaFbController.class);
-	private static Map<String, BotSession> botSessionMap = new HashMap<String, BotSession>();
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
 	private static final String ACCESS_TOKEN = "EAAUD51fNmIEBAGNJi2gFBTOlNdZCZBoREqto8BqQHlzqdSCJAkDUQF6uaV1XCZBSSLJj5Km2smraSFZCUKx1bhAZAsjIxfnqYGhCX7J39IOJMgmEFHZCGgvA094DdzoCZCgkU6LiivUwZAZB3xZCROBsLxDBXg2OVINYOJaewtGzrbx9e36KCkKbbr";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
-	private static final String IM_LOGIN_URL = "https://sella.it/sellabot/chatinit?nome=%s&cognome=%s&email=%s&CHANNEL=Sella_sito_free";
-	private static final String CHAT_URL = "https://sella.it/sellabot/execute/user/chat";
-	private static final String POLL_URL = "https://sella.it/sellabot/execute/user/poll";
+	private static Map<String, IMSession> botSessionMap = new HashMap<String, IMSession>();
+
 
 	@GetMapping("/webhook")
 	public ResponseEntity<?> verify(@RequestParam("hub.challenge") String challenge,
@@ -81,6 +80,8 @@ public class SellaFbController {
 				logger.info("<<<<<<<<<<<<TextMessage::{},EventyType:::{}>>>>>>>>>>>>>>", textMessage, eventType);
 				String senderActionAcknowledge = sendMessage(getSenderActionResonsePayload("mark_seen", senderId));
 				sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"", userDetail));
+				IMSession imSession=getUserSession(recipientId, senderId, userDetail);
+				logger.info("<<<<<<<<<<<<<imSession::{}>>>>>>>>>>>>",imSession);
 				senderActionAcknowledge = sendMessage(getSenderActionResonsePayload("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}>>>>>>>>>>>", senderActionAcknowledge);
 			}
@@ -173,11 +174,37 @@ public class SellaFbController {
 	}]
 }*/
 	
+	/**Method to get senderId from the fb request payload
+	 * @param requestPayload
+	 * @return
+	 */
 	private String getSenderId(final RequestPayload requestPayload) {
 		return requestPayload.getEntry().get(0).getMessaging().get(0).getSender().getId();
 	}
 	
+	/**Method to get receipientId from the fb request payload
+	 * @param requestPayload
+	 * @return
+	 */
 	private String getReceipientId(final RequestPayload requestPayload) {
 		return requestPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
+	}
+	
+	private IMSession getUserSession(final String recipientId, final String senderId, final UserDetail userDetail) {
+		IMSession imSession = null;
+		if (botSessionMap.containsKey(recipientId)) {
+			logger.info("<<<<<<<<<<<<<<<ImSession already available in session>>>>>>>>>>>>>>>>>");
+			imSession = (IMSession) botSessionMap.get(recipientId);
+			if (LocalDateTime.now().isAfter(imSession.getLastRequestDate().plusMinutes(25))) {
+				imSession = IMBotClient.getNewBotSession(userDetail, senderId, recipientId);
+			}else if(LocalDateTime.now().isAfter(imSession.getLastRequestDate().plusMinutes(2))) {
+				imSession.setImChatId(IMBotClient.getNewChatId(imSession.getCookieInfo()));
+				imSession.setLastRequestDate(LocalDateTime.now());
+			}
+		} else {
+			imSession = IMBotClient.getNewBotSession(userDetail, senderId, recipientId);
+		}
+		botSessionMap.put(recipientId, imSession);
+		return imSession;		
 	}
 }
