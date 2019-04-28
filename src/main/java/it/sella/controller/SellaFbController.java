@@ -1,7 +1,6 @@
 
 package it.sella.controller;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +27,9 @@ import it.sella.model.Entry;
 import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
+import it.sella.model.im.ChatResponse;
+import it.sella.model.im.Eventdatum;
+import it.sella.model.im.MessagePayload;
 
 @RestController
 public class SellaFbController {
@@ -78,12 +80,14 @@ public class SellaFbController {
 			for (Messaging messaging : entry.getMessaging()) {
 				final String textMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
 				logger.info("<<<<<<<<<<<<TextMessage::{},EventyType:::{}>>>>>>>>>>>>>>", textMessage, eventType);
-				String senderActionAcknowledge = sendMessage(getSenderActionResonsePayload("mark_seen", senderId));
-				sendMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"", userDetail));
+				String senderActionAcknowledge = sendFBMessage(getSenderActionResonsePayload("mark_seen", senderId));
+				sendFBMessage(QnaResponse.getJsonResponse(senderId, textMessage!=null?textMessage.toLowerCase():"", userDetail));
 				IMSession imSession=getUserSession(recipientId, senderId, userDetail);
 				logger.info("<<<<<<<<<<<<<imSession::{}>>>>>>>>>>>>",imSession);
-				senderActionAcknowledge = sendMessage(getSenderActionResonsePayload("typing_off", senderId));
+				
+				senderActionAcknowledge = sendFBMessage(getSenderActionResonsePayload("typing_off", senderId));
 				logger.info("senderActionAcknowledge>>>>{}>>>>>>>>>>>", senderActionAcknowledge);
+				
 			}
 		}
 		return new ResponseEntity<String>("Success", HttpStatus.OK);
@@ -96,7 +100,7 @@ public class SellaFbController {
 	 * @param fbResponsePayload :String
 	 * @return
 	 */
-	public String sendMessage(String fbResponsePayload) {
+	public String sendFBMessage(String fbResponsePayload) {
 		logger.info("<<<<<<<<<<<<<<<<<<<ResponsePayload::{}>>>>>>>>>>>>",fbResponsePayload);
 		final String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
 		final RestTemplate restTemplate = new RestTemplate();
@@ -190,6 +194,12 @@ public class SellaFbController {
 		return requestPayload.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
 	}
 	
+	/**Method to get chat session
+	 * @param recipientId:String
+	 * @param senderId :String
+	 * @param userDetail :UserDetail
+	 * @return
+	 */
 	private IMSession getUserSession(final String recipientId, final String senderId, final UserDetail userDetail) {
 		IMSession imSession = null;
 		if (botSessionMap.containsKey(recipientId)) {
@@ -207,4 +217,9 @@ public class SellaFbController {
 		botSessionMap.put(recipientId, imSession);
 		return imSession;		
 	}
+	
+	private void imProcess(final IMSession imSession, final String fbMessage) {
+		IMBotClient.sendImMessage(imSession, fbMessage);
+	}
+	
 }

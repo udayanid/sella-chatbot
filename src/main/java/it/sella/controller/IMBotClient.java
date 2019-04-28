@@ -13,6 +13,9 @@ import org.springframework.web.client.RestTemplate;
 
 import it.sella.IMSession;
 import it.sella.model.UserDetail;
+import it.sella.model.im.ChatResponse;
+import it.sella.model.im.Eventdatum;
+import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
 
 public class IMBotClient
@@ -78,6 +81,46 @@ public class IMBotClient
 			imSession.setLastRequestDate(LocalDateTime.now());
 		}
 		return imSession;
+	}
+	
+	/**Method to send fb message to IM
+	 * @param chatId
+	 * @param fbMessage
+	 * @param cookieInfo
+	 * @return
+	 */
+	public static ResponseEntity<ChatResponse> sendImMessage(final IMSession imSession, final String fbMessage) {
+		final MessagePayload messagepayload = new MessagePayload();
+		messagepayload.setAction("chatevent");
+		messagepayload.setIdevent("chatmessage");
+		messagepayload.setChatid(imSession.getImChatId());
+		final Eventdatum eventdatum = new Eventdatum();
+		eventdatum.setName("message");
+		eventdatum.setValue(fbMessage);
+		messagepayload.addEventDatum(eventdatum);
+		logger.info("<<<<<<<<<<<<<<<<IM requestMessagePayload::{}>>>>>>>>>>>", messagepayload);
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Cookie", imSession.getCookieInfo());
+		final HttpEntity<MessagePayload> messageEntity = new HttpEntity<>(messagepayload, headers);
+		final RestTemplate restTemplate = new RestTemplate();
+		final ResponseEntity<ChatResponse> sendImMessageResponseEntity = restTemplate.postForEntity(CHAT_URL, messageEntity, ChatResponse.class);
+		logger.info("<<<<<<<<<<<sendImMessageResponseEntity:::{}>>>>>>>>>>>>>>>>",sendImMessageResponseEntity.getStatusCode());
+		return sendImMessageResponseEntity;
+		/*
+		 *
+		 * Requesting to bot for new message { "action": "chatevent", "chatid":
+		 * "d2bj9hvl1dp0fe392hls908e51", "idevent": "chatmessage", "sourceIntentCode":
+		 * "", "eventdata": [{ "name": "message", "value": "hello" }] }
+		 * 
+		 * incase of chatid not found in bot { "status": "EXCEPTION", "errors": [{
+		 * "messageCode": "IM_CHAT_ID_NOT_FOUND", "messageParams": [],
+		 * "messageFEFields": "*" }], "requests": null, "codes": null, "contextChange":
+		 * null, "concepts": null, "favorites": null, "chatid": null, "chaturl": null,
+		 * "result": null, "cause": null, "licenses": null, "transcript": null,
+		 * "overTime": null, "errorMessageCode": "IM_CHAT_ID_NOT_FOUND" }
+		 *
+		 */
 	}
 	
 }
