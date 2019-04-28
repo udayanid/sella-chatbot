@@ -2,6 +2,7 @@ package it.sella.controller;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,8 @@ import it.sella.model.im.ChatResponse;
 import it.sella.model.im.Eventdatum;
 import it.sella.model.im.MessagePayload;
 import it.sella.model.im.NewChatInfo;
+import it.sella.model.im.PollResponse;
+import it.sella.model.im.Result;
 
 public class IMBotClient
 {	
@@ -121,6 +124,58 @@ public class IMBotClient
 		 * "overTime": null, "errorMessageCode": "IM_CHAT_ID_NOT_FOUND" }
 		 *
 		 */
+	}
+	
+
+	/**Method to get IM Polling Response
+	 * @param recipientId
+	 * @param chatId
+	 * @param cookieInfo
+	 * @param totalPolls
+	 */
+	public static void getPollResponse(final IMSession imSession, int totalPolls) {
+		final String pollPayload = String.format("{\"chatid\":\"%s\"}", imSession.getImChatId());
+		logger.info("<<<<<<<<<polling Request payload::{}>>>>>>>>>>>>>>>", pollPayload);
+		final RestTemplate restTemplate = new RestTemplate();
+		final HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.add("Cookie", imSession.getCookieInfo());
+		final HttpEntity<String> pollEntity = new HttpEntity<>(pollPayload, headers);
+		for (int i = 1; i <= totalPolls; i++) {
+			final ResponseEntity<PollResponse> getPollResponseEntity = restTemplate.postForEntity(POLL_URL, pollEntity,	PollResponse.class);
+			logger.info("<<<<<<<<<<<getPollResponseEntity status:::{}>>>>>>>>>>>>>>>>",	getPollResponseEntity.getStatusCode());
+			final PollResponse pollResponse = getPollResponseEntity.getBody();
+			logger.info("<<<<<<<<<<<<<<<<<<<<PollResponse:::{}>>>>>>>>>>>>>>>>>>>>>", pollResponse);
+			logger.info("<<<<<<<<<<<<<poll No.{} => Result Collection Size:::{}>>>>>>>>>>>", i, pollResponse.getResults().size());
+			logger.info("<<<<<<<<<<<<PollResponsePayload Status :::{}>>>>>>>>>>>", pollResponse.getStatus());
+			for (final Result result : pollResponse.getResults()) {
+				logger.info("<<<<<<<<<<<<Each Result  :::{}>>>>>>>>>>>>>", result);
+				final String answer = result.getAnswer();
+				final String message = result.getMessage();
+				if (answer != null && !answer.isEmpty()) {
+					String imResponsePayload = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", imSession.getFbSenderId(), answer);
+					logger.info("<<<<<<<<<When answer is not null, then ImResponsePayload::::{}>>>>>>>>>>", imResponsePayload);
+					String fbAcknowledgement = SellaFbController.sendFBMessage(imResponsePayload);
+					logger.info("***************poll Answer Acknowledgement of fb:::{}****************", fbAcknowledgement);
+					if (result.getLink() != null && !result.getLink().isEmpty()) {
+						imResponsePayload = String.format("{ \"recipient\":{ \"id\":\"%s\" }, \"message\":{ \"attachment\":{ \"type\":\"template\", \"payload\":{ \"template_type\":\"open_graph\", \"elements\":[ { \"url\":\"%s\", \"buttons\":[ { \"type\":\"web_url\", \"url\":\"https://www.sella.it\", \"title\":\"View More\" } ] } ] } } } }", imSession.getFbSenderId(), result.getLink());
+						logger.info("<<<<<<<<<When link is not null, then ImResponsePayload::::{}>>>>>>>>>>", imResponsePayload);
+						fbAcknowledgement = SellaFbController.sendFBMessage(imResponsePayload);
+						logger.info("++++++++++++++++++poll link Acknowledgement of fb:::{}++++++++++++++++++",	fbAcknowledgement);
+					}
+				} else if (message != null && !message.isEmpty()) {
+					String imResponsePayload = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", imSession.getFbSenderId(), message);
+					logger.info("<<<<<<<<<When message is not null, then ImResponsePayload::::{}>>>>>>>>>>", imResponsePayload);
+					String fbAcknowledgement = SellaFbController.sendFBMessage(imResponsePayload);
+					logger.info("*********************poll Message Acknowledgement of fb:::{}***************", fbAcknowledgement);
+				}
+			}
+			try {
+				Thread.sleep(new Long(1000));
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

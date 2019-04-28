@@ -28,8 +28,6 @@ import it.sella.model.Messaging;
 import it.sella.model.RequestPayload;
 import it.sella.model.UserDetail;
 import it.sella.model.im.ChatResponse;
-import it.sella.model.im.Eventdatum;
-import it.sella.model.im.MessagePayload;
 
 @RestController
 public class SellaFbController {
@@ -78,7 +76,7 @@ public class SellaFbController {
 			logger.info("<<<<<<<<<<<<Total facebook message entry ::{}>>>>>>>>>>>>>>", total_msg);
 			
 			for (Messaging messaging : entry.getMessaging()) {
-				final String fbMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload()	: messaging.getMessage().getText();
+				final String fbMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload() : messaging.getMessage().getText();
 				logger.info("<<<<<<<<<<<<TextMessage::{},EventyType:::{}>>>>>>>>>>>>>>", fbMessage, eventType);
 				String senderActionAcknowledge = sendFBMessage(getSenderActionResonsePayload("mark_seen", senderId));
 				sendFBMessage(QnaResponse.getJsonResponse(senderId, fbMessage != null ? fbMessage.toLowerCase() : "",userDetail));
@@ -99,7 +97,7 @@ public class SellaFbController {
 	 * @param fbResponsePayload :String
 	 * @return
 	 */
-	public String sendFBMessage(String fbResponsePayload) {
+	public static String sendFBMessage(String fbResponsePayload) {
 		logger.info("<<<<<<<<<<<<<<<<<<<ResponsePayload::{}>>>>>>>>>>>>",fbResponsePayload);
 		final String url = String.format(FB_GRAPH_API_URL_MESSAGES, ACCESS_TOKEN);
 		final RestTemplate restTemplate = new RestTemplate();
@@ -217,8 +215,15 @@ public class SellaFbController {
 		return imSession;		
 	}
 	
+	/**Method to process Im Request/Response through messenger Interface
+	 * @param imSession:IMSession
+	 * @param fbMessage:String
+	 */
 	private void imProcess(final IMSession imSession, final String fbMessage) {
-		IMBotClient.sendImMessage(imSession, fbMessage);
+		final ChatResponse chatResponse =IMBotClient.sendImMessage(imSession, fbMessage).getBody();
+		imSession.setLastRequestDate(LocalDateTime.now());		
+		logger.info("<<<<<<<<<ChatResponse:::{}>>>>>>>>>>>>>>>", chatResponse);
+		IMBotClient.getPollResponse(imSession, 8);
 	}
 	
 }
