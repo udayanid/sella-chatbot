@@ -104,7 +104,7 @@ public class SellaFbController {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		final HttpEntity<String> entity = new HttpEntity<String>(fbResponsePayload, headers);
-		return restTemplate.postForObject(url, entity, String.class);
+		return restTemplate.postForObject(url, entity, String.class); 
 	}
 
 	
