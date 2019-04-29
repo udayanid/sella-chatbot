@@ -79,7 +79,6 @@ public class SellaFbController {
 				final String fbMessage = eventType.equals("PostbackEvent") ? messaging.getPostback().getPayload() : messaging.getMessage().getText();
 				logger.info("<<<<<<<<<<<<TextMessage::{},EventyType:::{}>>>>>>>>>>>>>>", fbMessage, eventType);
 				String senderActionAcknowledge = sendFBMessage(getSenderActionResonsePayload("mark_seen", senderId));
-				sendFBMessage(QnaResponse.getJsonResponse(senderId, fbMessage != null ? fbMessage.toLowerCase() : "",userDetail));
 				IMSession imSession=getUserSession(recipientId, senderId, userDetail);
 				logger.info("<<<<<<<<<<<<<imSession::{}>>>>>>>>>>>>",imSession);
 				imProcess(imSession, fbMessage);

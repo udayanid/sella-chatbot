@@ -174,9 +174,9 @@ public class IMBotClient
 				}
 			}
 			try {
-				Thread.sleep(new Long(1000));
+				Thread.sleep(new Long(2000));
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				logger.debug("<<<<<<<<<<<<<<<<Exception caught here:{}>>>>>>>>>>>>>>>>>>>",e.getMessage());
 			}
 		}
 	}
