@@ -163,7 +163,9 @@ public class IMBotClient
 						fbAcknowledgement = SellaFbController.sendFBMessage(imResponsePayload);
 						logger.info("++++++++++++++++++poll link Acknowledgement of fb:::{}++++++++++++++++++",	fbAcknowledgement);
 					}
-				} else if (message != null && !message.isEmpty()) {
+				} 
+				
+				if (message != null && !message.isEmpty()) {
 					message=message.replaceAll("\\\"", "\\\\\"");
 					String imResponsePayload = String.format("{ \"recipient\": { \"id\": \"%s\" }, \"message\": { \"text\": \"%s\" } }", imSession.getFbSenderId(), message);
 					logger.info("<<<<<<<<<When message is not null, then ImResponsePayload::::{}>>>>>>>>>>", imResponsePayload);
@@ -172,7 +174,7 @@ public class IMBotClient
 				}
 			}
 			try {
-				Thread.sleep(new Long(1200));
+				Thread.sleep(new Long(1000));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
