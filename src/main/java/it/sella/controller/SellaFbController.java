@@ -35,7 +35,7 @@ public class SellaFbController {
 	private static final String SIGNATURE_HEADER_NAME = "X-Hub-Signature";
 	private static final String ACCESS_TOKEN = "EAAUD51fNmIEBAGNJi2gFBTOlNdZCZBoREqto8BqQHlzqdSCJAkDUQF6uaV1XCZBSSLJj5Km2smraSFZCUKx1bhAZAsjIxfnqYGhCX7J39IOJMgmEFHZCGgvA094DdzoCZCgkU6LiivUwZAZB3xZCROBsLxDBXg2OVINYOJaewtGzrbx9e36KCkKbbr";
 	private static final String FB_GRAPH_API_URL_MESSAGES = "https://graph.facebook.com/v2.6/me/messages?access_token=%s";
-	private static Map<String, IMSession> botSessionMap = new HashMap<String, IMSession>();
+	private static Map<String, IMSession> chatSessionMap = new HashMap<String, IMSession>();
 
 
 	@GetMapping("/webhook")
@@ -199,9 +199,9 @@ public class SellaFbController {
 	 */
 	private IMSession getUserSession(final String recipientId, final String senderId, final UserDetail userDetail) {
 		IMSession imSession = null;
-		if (botSessionMap.containsKey(recipientId)) {
+		if (chatSessionMap.containsKey(recipientId)) {
 			logger.info("<<<<<<<<<<<<<<<ImSession already available in session>>>>>>>>>>>>>>>>>");
-			imSession = (IMSession) botSessionMap.get(recipientId);
+			imSession = (IMSession) chatSessionMap.get(recipientId);
 			if (LocalDateTime.now().isAfter(imSession.getLastRequestDate().plusMinutes(25))) {
 				imSession = IMBotClient.getNewBotSession(userDetail, senderId, recipientId);
 			}else if(LocalDateTime.now().isAfter(imSession.getLastRequestDate().plusMinutes(2))) {
@@ -211,7 +211,7 @@ public class SellaFbController {
 		} else {
 			imSession = IMBotClient.getNewBotSession(userDetail, senderId, recipientId);
 		}
-		botSessionMap.put(recipientId, imSession);
+		chatSessionMap.put(recipientId, imSession);
 		return imSession;		
 	}
 	
@@ -223,6 +223,11 @@ public class SellaFbController {
 		final ChatResponse chatResponse =IMBotClient.sendImMessage(imSession, fbMessage).getBody();
 		imSession.setLastRequestDate(LocalDateTime.now());		
 		logger.info("<<<<<<<<<ChatResponse:::{}>>>>>>>>>>>>>>>", chatResponse);
+		if(chatResponse.getStatus().equals("EXCEPTION")) {
+			imSession.setImChatId(IMBotClient.getNewChatId(imSession.getCookieInfo()));
+			imSession.setLastRequestDate(LocalDateTime.now());
+			imProcess(imSession, fbMessage);
+		}
 		IMBotClient.getPollResponse(imSession, 8);
 	}
 	

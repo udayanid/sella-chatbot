@@ -2,7 +2,6 @@ package it.sella.controller;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.engine.spi.SessionDelegatorBaseImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -173,7 +172,7 @@ public class IMBotClient
 				}
 			}
 			try {
-				Thread.sleep(new Long(1000));
+				Thread.sleep(new Long(1200));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
